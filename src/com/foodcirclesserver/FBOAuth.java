@@ -1,14 +1,20 @@
 package com.foodcirclesserver;
 
+import java.io.BufferedReader;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 
 
@@ -16,7 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 public class FBOAuth extends HttpServlet {
 	
 	private static final long serialVersionUID = 8334594117407174449L;
-	private static final String REDIRECT = "http://localhost:8888/loginresult";
+	private static final String REDIRECT = "/logintest.jsp";
 
 	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
         String code = req.getParameter("code");
@@ -29,7 +35,6 @@ public class FBOAuth extends HttpServlet {
 	                String result = readURL(url);
 	                String accessToken = null;
 	                Integer expires = null;
-	                String userID = null;
 	                String[] pairs = result.split("&");
 	                for (String pair : pairs) {
 	                    String[] kv = pair.split("=");
@@ -42,21 +47,52 @@ public class FBOAuth extends HttpServlet {
 	                        if (kv[0].equals("expires")) {
 	                            expires = Integer.valueOf(kv[1]);
 	                        }
-	                        if (kv[0].equals("userID")){
-	                        	userID = kv[1];
-	                        }
 	                    }
 	                }
-	                if (accessToken != null && expires != null) {
+	                if (accessToken != null && expires != null ) {
 	                    //UserService us = UserService.get();
 	                    //us.authFacebookLogin(accessToken, expires);
-	                    resp.sendRedirect(REDIRECT);
+	                	req.setAttribute(UserManager.ACCESS_TOKEN, accessToken);
+	                	req.setAttribute("exp", expires);
+//	                    RequestDispatcher rd = getServletContext().getRequestDispatcher(REDIRECT);
+//	                    rd.forward(req, resp);
+	                	
+	                	//now that we have access token, get userid
+	                	//messy...
+	                	Integer userID = null;
+	                	
+	                	JsonParser parser = new JsonParser();
+	                	String jString = JsonHelper.getJSONfromUrl(Facebook.getUserURL(accessToken));
+	                	
+	                	JsonObject jObj = parser.parse(jString).getAsJsonObject();
+	                	userID = jObj.get("id").getAsInt();
+		                
+		                
+		                if (userID != null) {
+//		                    RequestDispatcher rd = getServletContext().getRequestDispatcher("/getfriends?");
+//		                    
+//		                    req.setAttribute(UserManager.USER_ID, userID);
+//		                    rd.forward(req, resp);
+		                    
+		                    URL requrl = new URL("http://localhost:8888/getfriends?" + 
+		                    			UserManager.USER_ID + "=" + userID + "&" + 
+		                    			UserManager.ACCESS_TOKEN + "=" + accessToken);
+		                    
+		                    BufferedReader reader = new BufferedReader(new InputStreamReader(requrl.openStream()));
+		                    String line;
+
+		                    while ((line = reader.readLine()) != null) {
+		                        // ...
+		                    }
+		                    reader.close();
+		                }
+		                
 	                } else {
 	                    throw new RuntimeException("Access token and expires not found");
 	                }
 	            } catch (IOException e) {
 	                throw new RuntimeException(e);
-	            }
+	            } 
 			} catch (MalformedURLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
