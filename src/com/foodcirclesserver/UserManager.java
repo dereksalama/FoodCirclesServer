@@ -1,9 +1,6 @@
 /* User utility
  * 
- * createUser(userID, accessToken) - creates new user or updates token if changed
- * getUser(userID) - fetch user based on ID
- * updateStatus(userID, status) - set new status field
- * updateTrain(userID, train) - set new train field
+ * -methods are still evolving so I'm too lazy to go through them right now
  * 
  * -Derek Salama
  * 
@@ -12,7 +9,6 @@ package com.foodcirclesserver;
 
 
 import com.google.appengine.api.datastore.DatastoreService;
-import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.Entity;
 import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.appengine.api.datastore.Key;
@@ -23,19 +19,46 @@ public class UserManager {
 	public static final String USER = "user";
 	public static final String USER_ID = "user_id";
 	public static final String NAME = "name";
-	public static final String ACCESS_TOKEN = "access";
 	public static final String STATUS = "status";
 	public static final String CURRENT_TRAIN = "train";
 	
-	/* create new user or update existing accessToken */
-	public static void createUser(Integer userID, String name, String accessToken) {
+	//user statuses
+	public static final Integer GREEN = 0;
+	public static final Integer YELLOW = 1;
+	public static final Integer RED = 2;
+	public static final Integer OTHER = 3;
+	
+	public static void updateUser(String userID, Integer status, String currentTrain, DatastoreService ds) {
 		
-		if (userID == null || userID <= 0 || accessToken == null || accessToken.length() <= 0) {
+		if (userID == null || userID.length() <= 0) {
+			System.out.println("updateUser error: invalid userID");
+			return;
+		}
+		
+		Key userKey = KeyFactory.createKey(USER, userID);
+		
+		Entity user;
+
+		try {
+			user = ds.get(userKey);
+		} catch (EntityNotFoundException e) {
+			//user not in ds
+			return;
+		}
+		
+		user.setProperty(STATUS, status);
+		user.setProperty(CURRENT_TRAIN, currentTrain);
+		
+		
+	}
+	
+	public static void createUser(String userID, String name, DatastoreService ds) {
+		
+		if (userID == null || userID.length() <= 0) {
 			System.out.println("createUser error: null  or 0 value");
 			return;
 		}
 			
-		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 		
 		//check if user is already in db
 		Key userKey = KeyFactory.createKey(USER, userID);
@@ -44,28 +67,37 @@ public class UserManager {
 
 		try {
 			user = ds.get(userKey);
+			//user in ds, do nothing
 		} catch (EntityNotFoundException e) {
 			//user not in ds
 			user = new Entity(USER, userID);
 			user.setProperty(USER_ID, userID);
 			user.setProperty(NAME, name);
-			user.setProperty(ACCESS_TOKEN, accessToken);
+			user.setProperty(STATUS, RED);
+			ds.put(user);
 			
 		}
 		
-		//update accesstoken if different from previous value
-		//redundant if user is new...
-		if(!((String)user.getProperty(ACCESS_TOKEN)).equalsIgnoreCase(accessToken))
-			user.setUnindexedProperty(ACCESS_TOKEN, accessToken);
-		
-		
 	}
 	
-	public static User getUser(String userID) {
+	public static User getUser(String userID,  DatastoreService ds) {
 		if (userID == null)
 			return null;
 		
-		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+		Entity user = getUserAsEntity(userID, ds);
+		if (user == null)
+			return null;
+		
+		String name = (String) user.getProperty(NAME);
+		Integer status = (Integer) user.getProperty(STATUS);
+		String currentTrain = (String) user.getProperty(CURRENT_TRAIN);
+		
+		User userResult = new User(userID, name, status, currentTrain);
+		
+		return userResult;
+	}
+	
+	public static Entity getUserAsEntity(String userID,  DatastoreService ds) {
 		
 		Key userKey = KeyFactory.createKey(USER, userID);
 		
@@ -75,29 +107,21 @@ public class UserManager {
 			user = ds.get(userKey);
 		} catch (EntityNotFoundException e) {
 			//user not in ds
-			System.out.println("getUser error: user " + userID + " does not exist");
+//			System.out.println("getUser error: user " + userID + " does not exist");
 			return null;
 			
 		}
 		
-		String name = (String) user.getProperty(NAME);
-		String accessToken = (String) user.getProperty(ACCESS_TOKEN);
-		String status = (String) user.getProperty(STATUS);
-		String currentTrain = (String) user.getProperty(CURRENT_TRAIN);
+		return user;
 		
-		User userResult = new User(userID, name, accessToken, status, currentTrain);
-		
-		return userResult;
 	}
 	
-	public static void updateStatus(Integer userID, String status) {
+	public static void updateStatus(String userID, String status,  DatastoreService ds) {
 		
-		if (userID == null || userID <= 0 || status == null || status.length() <= 0) {
+		if (userID == null || userID.length() <= 0 || status == null || status.length() <= 0) {
 			System.out.println("updateStatus error: null  or 0 value");
 			return;
 		}
-			
-		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 		
 		//check if user is already in db
 		Key userKey = KeyFactory.createKey(USER, userID);
@@ -115,14 +139,12 @@ public class UserManager {
 		user.setProperty(STATUS, status);
 	}
 	
-	public static void updateTrain(Integer userID, String train) {
+	public static void updateTrain(String userID, String train,  DatastoreService ds) {
 		
-		if (userID == null || userID <= 0 || train == null || train.length() <= 0) {
+		if (userID == null || userID.length() <= 0 || train == null || train.length() <= 0) {
 			System.out.println("updatetrain error: null  or 0 value");
 			return;
 		}
-			
-		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 		
 		//check if user is already in db
 		Key userKey = KeyFactory.createKey(USER, userID);

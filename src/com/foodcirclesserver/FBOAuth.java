@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.net.MalformedURLException;
 import java.net.URL;
 
+import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -52,7 +53,7 @@ public class FBOAuth extends HttpServlet {
 	                if (accessToken != null && expires != null ) {
 	                    //UserService us = UserService.get();
 	                    //us.authFacebookLogin(accessToken, expires);
-	                	req.setAttribute(UserManager.ACCESS_TOKEN, accessToken);
+	                	req.setAttribute("access_token", accessToken);
 	                	req.setAttribute("exp", expires);
 //	                    RequestDispatcher rd = getServletContext().getRequestDispatcher(REDIRECT);
 //	                    rd.forward(req, resp);
@@ -69,22 +70,22 @@ public class FBOAuth extends HttpServlet {
 		                
 		                
 		                if (userID != null) {
-//		                    RequestDispatcher rd = getServletContext().getRequestDispatcher("/getfriends?");
-//		                    
-//		                    req.setAttribute(UserManager.USER_ID, userID);
-//		                    rd.forward(req, resp);
+		                    RequestDispatcher rd = getServletContext().getRequestDispatcher("/getfriends?");
 		                    
-		                    URL requrl = new URL("http://localhost:8888/getfriends?" + 
+		                    req.setAttribute(UserManager.USER_ID, userID);
+		                    rd.forward(req, resp);
+		                    
+		                    String reqURL = "http://localhost:8888/getfriends?" + 
 		                    			UserManager.USER_ID + "=" + userID + "&" + 
-		                    			UserManager.ACCESS_TOKEN + "=" + accessToken);
-		                    
-		                    BufferedReader reader = new BufferedReader(new InputStreamReader(requrl.openStream()));
-		                    String line;
+		                    			"access_token" + "=" + accessToken;
 
-		                    while ((line = reader.readLine()) != null) {
-		                        // ...
-		                    }
-		                    reader.close();
+		                    String response = JsonHelper.getJSONfromUrl(reqURL);
+		                    System.out.println(response);
+		                    //shits not working for some reason
+//		            		resp.setContentType("text/json");
+//		                    resp.getOutputStream().print(response);
+//		                	System.out.println(userID);
+//		                	System.out.println(accessToken);
 		                }
 		                
 	                } else {
@@ -92,7 +93,10 @@ public class FBOAuth extends HttpServlet {
 	                }
 	            } catch (IOException e) {
 	                throw new RuntimeException(e);
-	            } 
+	            } catch (ServletException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} 
 			} catch (MalformedURLException e1) {
 				// TODO Auto-generated catch block
 				e1.printStackTrace();
@@ -110,5 +114,7 @@ public class FBOAuth extends HttpServlet {
         }
         return new String(baos.toByteArray());
     }
+    
+    
 
 }
