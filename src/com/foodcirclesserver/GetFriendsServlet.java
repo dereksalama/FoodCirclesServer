@@ -81,6 +81,9 @@ public class GetFriendsServlet extends HttpServlet {
 		JsonObject response = parser.parse(jString).getAsJsonObject();
 		JsonArray data = response.getAsJsonArray("data");
 		
+		if (data == null)
+			return null; //often token expired error
+		
 		List<FacebookFriend> friends = new LinkedList<FacebookFriend>();
 		for (JsonElement obj : data) {
 			FacebookFriend f = gson.fromJson(obj, FacebookFriend.class);
@@ -91,6 +94,9 @@ public class GetFriendsServlet extends HttpServlet {
 	}
 	
 	public static List<User> getFoodFriends(List<FacebookFriend> fbFriends,  DatastoreService ds) {
+		if (fbFriends == null)
+			return null;
+		
 		List<User> foodFriends = new LinkedList<User>();
 		
 		for (FacebookFriend fbF : fbFriends) {

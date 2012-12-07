@@ -6,8 +6,9 @@
  *
  * response:
  * List<String>
+ * ex: ["test","test2","All Friends"]
  *
- *
+ * -Derek
  */
 
 package com.foodcirclesserver;
@@ -43,7 +44,7 @@ public class GetCirclesServlet extends HttpServlet {
 		
 		Gson gson = new Gson();
 		String jString = gson.toJson(circleNames);
-		System.out.println(jString);
+//		System.out.println(jString);
 		
 		resp.setContentType("text/json");
 		

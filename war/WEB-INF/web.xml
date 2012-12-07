@@ -44,13 +44,21 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	    <servlet-name>User</servlet-name>
 	    <url-pattern>/user</url-pattern>
 	</servlet-mapping>
-		<servlet>
+	<servlet>
 	    <servlet-name>GetCircleMembers</servlet-name>
 	    <servlet-class>com.foodcirclesserver.GetCircleMembersServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>GetCircleMembers</servlet-name>
 	    <url-pattern>/getcirclemembers</url-pattern>
+	</servlet-mapping>
+	<servlet>
+	    <servlet-name>Circle</servlet-name>
+	    <servlet-class>com.foodcirclesserver.CircleServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>Circle</servlet-name>
+	    <url-pattern>/circle</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

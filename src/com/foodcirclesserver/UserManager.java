@@ -89,10 +89,10 @@ public class UserManager {
 			return null;
 		
 		String name = (String) user.getProperty(NAME);
-		Integer status = (Integer) user.getProperty(STATUS);
+		long status = (Long) user.getProperty(STATUS);
 		String currentTrain = (String) user.getProperty(CURRENT_TRAIN);
 		
-		User userResult = new User(userID, name, status, currentTrain);
+		User userResult = new User(userID, name, (int) status, currentTrain);
 		
 		return userResult;
 	}
@@ -116,9 +116,9 @@ public class UserManager {
 		
 	}
 	
-	public static void updateStatus(String userID, String status,  DatastoreService ds) {
+	public static void updateStatus(String userID, Integer status,  DatastoreService ds) {
 		
-		if (userID == null || userID.length() <= 0 || status == null || status.length() <= 0) {
+		if (userID == null || userID.length() <= 0 || status == null) {
 			System.out.println("updateStatus error: null  or 0 value");
 			return;
 		}
@@ -137,6 +137,7 @@ public class UserManager {
 		}
 		
 		user.setProperty(STATUS, status);
+		ds.put(user);
 	}
 	
 	public static void updateTrain(String userID, String train,  DatastoreService ds) {
@@ -160,6 +161,7 @@ public class UserManager {
 		}
 		
 		user.setProperty(CURRENT_TRAIN, train);
+		ds.put(user);
 	}
 	
 

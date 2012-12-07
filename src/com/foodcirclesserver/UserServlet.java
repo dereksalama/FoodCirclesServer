@@ -1,9 +1,9 @@
 /*
  * UserServlet - creating and updating users
- * req: /user?userID=...&action=...
+ * req: /user?user_id=...&action=...
  *  	-Action specifies what you want to do
  *  	-current operations:
- *  		-create: &name=... -> initializes user 
+ *  		-create: &name=... (first_last)-> initializes user 
  *  		-update: &status=...&train=... -> set (global) status and current train
  *  		-circle_statuses: &cricles=circle1,#;circle2,# (comma between circle name and status, semicolon
  *  														between different circles)
@@ -30,14 +30,18 @@ public class UserServlet extends HttpServlet {
 			return; //invalid user parameter
 		
 		String action = req.getParameter("action");
+		if (action == null)
+			return;
 		
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+		
 		
 		switch (action) {
 		
 		case "create":
 			String name = req.getParameter(UserManager.NAME);
-			UserManager.createUser(userID, name, ds);
+			String parsedName = name.replace('_', ' '); //can't do request with spaces, so use underscores and replace
+			UserManager.createUser(userID, parsedName, ds);
 			break;
 		case "update":
 			Integer status = Integer.parseInt(req.getParameter(UserManager.STATUS));
@@ -45,6 +49,8 @@ public class UserServlet extends HttpServlet {
 			UserManager.updateUser(userID, status, currentTrain, ds);
 			break;
 		case "circle_statuses": //set status for indiv circles
+			//first set status to other
+			UserManager.updateStatus(userID, UserManager.OTHER, ds);
 			String circleList = req.getParameter("circles");
 			String[] circles = circleList.split(";");
 			for(String circle : circles) {
@@ -53,6 +59,11 @@ public class UserServlet extends HttpServlet {
 				Integer circleStatus = Integer.parseInt(pair[1]);
 				CircleManager.setStatusForCircle(userID, circleStatus, circleName, ds);
 			}
+			break;
+		default:
+			System.out.println("User Servlet: no action matched");
+			break;
+			
 		}
 	}
 

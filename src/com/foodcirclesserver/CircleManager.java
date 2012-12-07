@@ -17,7 +17,7 @@ public class CircleManager {
 	public static final String USER_ID = "user_id";
 	public static final String USER_STATUS = "status"; //specific status for circle
 	
-	public static final String ALL_FRIENDS_CIRCLE = "All Friends";
+	public static final String ALL_FRIENDS_CIRCLE = "All";
 	
 	public static void addUserToCircle(String userID, String circleName, DatastoreService ds) {
 		if (userID == null || userID.length() <= 0 || circleName == null || circleName.length() <= 0)
@@ -47,6 +47,7 @@ public class CircleManager {
 			e.setProperty(CIRCLE_NAME, circleName);
 			e.setProperty(USER_ID, userID);
 			e.setProperty(USER_STATUS, UserManager.RED); //set default to red?
+			ds.put(e);
 			
 		}
 	}
@@ -70,6 +71,7 @@ public class CircleManager {
 		}
 		
 		result.setProperty(USER_STATUS, status);
+		ds.put(result);
 	}
 	
 	public static List<Circle> getCirclesByUser(String userID,  DatastoreService ds) {
@@ -101,8 +103,8 @@ public class CircleManager {
 			if(!user.equalsIgnoreCase(userID)) { //don't add specified current user
 				User u = UserManager.getUser(user, ds);
 				if (u.status == UserManager.OTHER) { //if status is set to "other" get specific status
-					int specStatus = (Integer) e.getProperty(USER_STATUS);
-					u.status = specStatus;
+					long specStatus = (Long) e.getProperty(USER_STATUS);
+					u.status = (int) specStatus;
 				}
 				result.users.add(u);
 			}

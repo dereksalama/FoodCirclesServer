@@ -8,6 +8,7 @@
  * 
  * response:
  * Circle.java in json
+ * ex: {"name":"test","users":[{"user_id":"1062900298","name":"Jake Leichtling","status":2},{"user_id":"1357354248","name":"Luke Zirngibl","status":2}]}
  * 
  * -Derek
  */
@@ -51,7 +52,7 @@ public class GetCircleMembersServlet extends HttpServlet {
 		
 		Gson gson = new Gson();
 		String jString = gson.toJson(result);
-		System.out.println(jString);
+//		System.out.println(jString);
 		
 		resp.setContentType("text/json");
 		

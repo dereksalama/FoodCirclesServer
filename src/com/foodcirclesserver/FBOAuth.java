@@ -25,12 +25,12 @@ public class FBOAuth extends HttpServlet {
 	private static final long serialVersionUID = 8334594117407174449L;
 	private static final String REDIRECT = "/logintest.jsp";
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws MalformedURLException {
+		//TestBench.main();
         String code = req.getParameter("code");
         if (code != null && code.length() > 0) {
             String authURL = Facebook.getAuthURL(code);
             URL url;
-			try {
 				url = new URL(authURL);
 	            try {
 	                String result = readURL(url);
@@ -50,6 +50,8 @@ public class FBOAuth extends HttpServlet {
 	                        }
 	                    }
 	                }
+	                resp.getWriter().println(accessToken);
+	                /*
 	                if (accessToken != null && expires != null ) {
 	                    //UserService us = UserService.get();
 	                    //us.authFacebookLogin(accessToken, expires);
@@ -88,18 +90,13 @@ public class FBOAuth extends HttpServlet {
 //		                	System.out.println(accessToken);
 		                }
 		                
+		                
 	                } else {
 	                    throw new RuntimeException("Access token and expires not found");
 	                }
+	                */
 	            } catch (IOException e) {
 	                throw new RuntimeException(e);
-	            } catch (ServletException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} 
-			} catch (MalformedURLException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
 			}
 
         }       
