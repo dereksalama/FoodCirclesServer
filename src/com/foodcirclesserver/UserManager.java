@@ -28,7 +28,7 @@ public class UserManager {
 	public static final Integer RED = 2;
 	public static final Integer OTHER = 3;
 	
-	public static void updateUser(String userID, Integer status, String currentTrain, DatastoreService ds) {
+	public static void updateUser(String userID, Integer status, Long currentTrain, DatastoreService ds) {
 		
 		if (userID == null || userID.length() <= 0) {
 			System.out.println("updateUser error: invalid userID");
@@ -89,10 +89,10 @@ public class UserManager {
 			return null;
 		
 		String name = (String) user.getProperty(NAME);
-		long status = (Long) user.getProperty(STATUS);
-		String currentTrain = (String) user.getProperty(CURRENT_TRAIN);
+		Long status = (Long) user.getProperty(STATUS);
+		Long currentTrain = (Long) user.getProperty(CURRENT_TRAIN);
 		
-		User userResult = new User(userID, name, (int) status, currentTrain);
+		User userResult = new User(userID, name, status.intValue(), currentTrain);
 		
 		return userResult;
 	}
@@ -140,9 +140,9 @@ public class UserManager {
 		ds.put(user);
 	}
 	
-	public static void updateTrain(String userID, String train,  DatastoreService ds) {
+	public static void updateTrain(String userID, Long train,  DatastoreService ds) {
 		
-		if (userID == null || userID.length() <= 0 || train == null || train.length() <= 0) {
+		if (userID == null || userID.length() <= 0 || train == null ) {
 			System.out.println("updatetrain error: null  or 0 value");
 			return;
 		}

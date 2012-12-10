@@ -78,8 +78,11 @@ public class GetFriendsServlet extends HttpServlet {
 		if (jString == null)
 			return null;
 		
-		JsonObject response = parser.parse(jString).getAsJsonObject();
-		JsonArray data = response.getAsJsonArray("data");
+		JsonElement response = parser.parse(jString);
+		
+		JsonArray data = null;
+		if (response.isJsonArray())
+			data = response.getAsJsonObject().getAsJsonArray("data");
 		
 		if (data == null)
 			return null; //often token expired error

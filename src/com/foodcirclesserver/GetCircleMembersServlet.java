@@ -2,13 +2,12 @@
  * GetCircleMembersServlet - get the users (excluding specified user) from given servlet
  * 
  * request:
- *"/getcirclemembers?user_id=...&circle_name=..."
+ *"/getcirclemembers?user_id=...&circle_id=...&circle_name=..."
  * -> if trying to get "All Friends" circle, must ALSO include access token
  * 			(&access_token=...)
  * 
  * response:
  * Circle.java in json
- * ex: {"name":"test","users":[{"user_id":"1062900298","name":"Jake Leichtling","status":2},{"user_id":"1357354248","name":"Luke Zirngibl","status":2}]}
  * 
  * -Derek
  */
@@ -39,17 +38,26 @@ public class GetCircleMembersServlet extends HttpServlet {
 		if (circleName == null || circleName.length() <= 0)
 			return;
 		
+		Long circleID = Long.parseLong(req.getParameter(CircleManager.CIRCLE_ID));
+		
 		Circle result;
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 		
 		//if fetching "all friends" need access token for fb stuff
-		if (circleName.equalsIgnoreCase(CircleManager.ALL_FRIENDS_CIRCLE)) {
+		if (circleID == CircleManager.ALL_FRIENDS_ID) {
 			String accessToken = req.getParameter("access_token");
 			result = constructAllFriendsCircle(userID, accessToken, ds);
 		} else {
-			result = CircleManager.getCircle(circleName, userID, ds);
+			result = CircleManager.getCircleWithUsers(circleID, circleName, userID, ds);
 		}
 		
+		if (result == null) {
+			try {
+				resp.sendError(500, "No friends found");
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		Gson gson = new Gson();
 		String jString = gson.toJson(result);
 //		System.out.println(jString);
@@ -65,12 +73,14 @@ public class GetCircleMembersServlet extends HttpServlet {
 	}
 	
 	public static Circle constructAllFriendsCircle(String userID, String accessToken, DatastoreService ds) {
-		Circle result = new Circle(CircleManager.ALL_FRIENDS_CIRCLE);
+		Circle result = new Circle( CircleManager.ALL_FRIENDS_ID, CircleManager.ALL_FRIENDS_CIRCLE);
 		
 		List<FacebookFriend> fbFriends = GetFriendsServlet.getFbFriends(userID, accessToken);
+		if (fbFriends == null)
+			return null;
 		List<User> friends = GetFriendsServlet.getFoodFriends(fbFriends, ds);
 		
-		result.users = friends;
+		result.addUserList(friends);
 		
 		return result;
 	}

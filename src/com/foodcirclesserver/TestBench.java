@@ -1,10 +1,11 @@
 package com.foodcirclesserver;
 
-import java.util.List;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 
 
 
@@ -19,7 +20,7 @@ public class TestBench {
 		String userID = "576485009"; 
 		
 		//make sure you update this!!
-		String accessToken = "AAACEdEose0cBACeRL54kKZC0bc5pWbOWFqmEEkBPLpcrc4jog3q75d5alWCBw8dpYB49nZCzs8TjVdEdj5cKNEkWiwvagEhvPlHft3vQZDZD";
+		String accessToken = "AAACEdEose0cBAEjBSpYWQExfXEg5IKaZAlYF5dqPjlwCkQOaveZArQsjlWETihQd5AH4xTPNb8hAJHRjZAnbXSnMYQbnD83P9bkgiRBiQZDZD";
 		
 //		List<FacebookFriend> friends = GetFriendsServlet.getFbFriends(userID, accessToken);
 		
@@ -61,15 +62,20 @@ public class TestBench {
 		UserManager.createUser(jakeID, "Jake Leichtling", ds);
 		UserManager.createUser(lukeID, "Luke Zirngibl", ds);
 		
-		//to create circle, just add user
-		reqUrl = "http://localhost:8888/circle?user_id=" + userID + "&circle_name=test";
-		JsonHelper.getJSONfromUrl(reqUrl);
+		reqUrl = "http://localhost:8888/circle?action=create&user_id=" + userID + "&circle_name=test";
+		String newCircle = JsonHelper.getJSONfromUrl(reqUrl);
+//		System.out.println("new circle: " + newCircle);
+		Gson gson = new Gson();
+		JsonParser parser = new JsonParser();
+		JsonElement circle = parser.parse(newCircle);
+		Circle test = gson.fromJson(circle, Circle.class);
 		
-		CircleManager.addUserToCircle(jakeID, "test", ds);
-		CircleManager.addUserToCircle(lukeID, "test", ds);
+		CircleManager.addUserToCircle(jakeID, test.id, "test", ds);
+		CircleManager.addUserToCircle( lukeID,test.id, "test", ds);
 		
-		CircleManager.addUserToCircle(userID, "test2", ds);
-		CircleManager.addUserToCircle(jakeID, "test2", ds);
+		
+		Circle test2 = CircleManager.createCircle("test2", userID, ds);
+		CircleManager.addUserToCircle( jakeID,test2.id, test2.name, ds);
 		
 		
 		//set luke as available
@@ -78,7 +84,7 @@ public class TestBench {
 		
 		//set Jake as green for test, yellow for test2
 		reqUrl = "http://localhost:8888/user?user_id=" + jakeID + "&action=circle_statuses" +
-					"&circles=test,0;test2,1";
+					"&circles=" + test.id + ",0;" + test2.id + ",1";
 		JsonHelper.getJSONfromUrl(reqUrl);
 		
 		//get circles
@@ -87,20 +93,17 @@ public class TestBench {
 		System.out.println("Circles:  " + circleNames);
 		
 		//get members in circles
-		reqUrl = "http://localhost:8888/getcirclemembers?user_id=" + userID + "&circle_name=test";
+		reqUrl = "http://localhost:8888/getcirclemembers?user_id=" + userID + "&circle_name=test&circle_id=" + test.id;
 		String testMembers = JsonHelper.getJSONfromUrl(reqUrl);
 		System.out.println("Test Circle: " + testMembers);
 		
-		reqUrl = "http://localhost:8888/getcirclemembers?user_id=" + userID + "&circle_name=test2";
+		reqUrl = "http://localhost:8888/getcirclemembers?user_id=" + userID + "&circle_name=test2&circle_id=" + test2.id;
 		String test2Members = JsonHelper.getJSONfromUrl(reqUrl);
 		System.out.println("Test2 Circle: " + test2Members);
 		
-		reqUrl = "http://localhost:8888/getcirclemembers?user_id=" + userID + "&circle_name=All&access_token=" + accessToken;
+		reqUrl = "http://localhost:8888/getcirclemembers?user_id=" + userID + "&circle_name=All&circle_id=" + -1 +"&access_token=" + accessToken;
 		String allFriends = JsonHelper.getJSONfromUrl(reqUrl);
 		System.out.println("All Circle: " + allFriends);
-		
-		
-		
 		
 		
 

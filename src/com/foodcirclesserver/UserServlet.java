@@ -5,7 +5,7 @@
  *  	-current operations:
  *  		-create: &name=... (first_last)-> initializes user 
  *  		-update: &status=...&train=... -> set (global) status and current train
- *  		-circle_statuses: &cricles=circle1,#;circle2,# (comma between circle name and status, semicolon
+ *  		-circle_statuses: &cricles=circle1.id,#;circle2.id,# (comma between circle id and status, semicolon
  *  														between different circles)
  *  							--> set statuses for specific trains
  *  
@@ -45,7 +45,10 @@ public class UserServlet extends HttpServlet {
 			break;
 		case "update":
 			Integer status = Integer.parseInt(req.getParameter(UserManager.STATUS));
-			String currentTrain = req.getParameter(UserManager.CURRENT_TRAIN);
+			String currentTrainString = req.getParameter(UserManager.CURRENT_TRAIN);
+			Long currentTrain = null;
+			if (currentTrainString != null)
+				currentTrain = Long.parseLong(currentTrainString);
 			UserManager.updateUser(userID, status, currentTrain, ds);
 			break;
 		case "circle_statuses": //set status for indiv circles
@@ -55,9 +58,9 @@ public class UserServlet extends HttpServlet {
 			String[] circles = circleList.split(";");
 			for(String circle : circles) {
 				String[] pair = circle.split(",");
-				String circleName = pair[0];
+				Long circleID = Long.parseLong(pair[0]);
 				Integer circleStatus = Integer.parseInt(pair[1]);
-				CircleManager.setStatusForCircle(userID, circleStatus, circleName, ds);
+				CircleManager.setStatusForCircle(userID, circleStatus, circleID, ds);
 			}
 			break;
 		default:

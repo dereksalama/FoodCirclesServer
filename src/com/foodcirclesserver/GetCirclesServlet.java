@@ -5,8 +5,7 @@
  *"/getcircles?user_id=..."
  *
  * response:
- * List<String>
- * ex: ["test","test2","All Friends"]
+ * (light) List<Circle> in json (as in no users, just names and ids)
  *
  * -Derek
  */
@@ -37,10 +36,11 @@ public class GetCirclesServlet extends HttpServlet {
 
 		
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		List<String > circleNames = CircleManager.getCircleNames(userID, ds);
+		List<Circle > circleNames = CircleManager.getCircleNames(userID, ds);
 		
 		//add "All Friends" circle
-		circleNames.add("All Friends");
+		Circle allFriends = new Circle(CircleManager.ALL_FRIENDS_ID, "All Friends"); 
+		circleNames.add(allFriends);
 		
 		Gson gson = new Gson();
 		String jString = gson.toJson(circleNames);
@@ -49,7 +49,6 @@ public class GetCirclesServlet extends HttpServlet {
 		resp.setContentType("text/json");
 		
 		try {
-
 			resp.getWriter().println(jString);
 		} catch (IOException e) {
 			e.printStackTrace();

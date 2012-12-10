@@ -1,26 +1,77 @@
+/*
+ * circle manager
+ * -database columns:  circle_id, circle_name, user_id, status
+ * -unique id for each circle 
+ * -each row is user/circle pair, w/ user status for specific circle
+ * 
+ * -Derek
+ */
 package com.foodcirclesserver;
 
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.Entity;
+import com.google.appengine.api.datastore.FetchOptions;
 import com.google.appengine.api.datastore.PreparedQuery;
 import com.google.appengine.api.datastore.Query;
 
 
 public class CircleManager {
 	
-	public static final String TYPE = "cirle";
+	public static final String TYPE = "circle";
+	public static final String CIRCLE_ID = "circle_id";
 	public static final String CIRCLE_NAME = "circle_name";
 	public static final String USER_ID = "user_id";
 	public static final String USER_STATUS = "status"; //specific status for circle
 	
 	public static final String ALL_FRIENDS_CIRCLE = "All";
+	public static final long ALL_FRIENDS_ID = -1;
 	
-	public static void addUserToCircle(String userID, String circleName, DatastoreService ds) {
+	
+	//create unique key for circle and return
+	//auto adds creating user
+	public static Circle createCircle(String circleName, String userID, DatastoreService ds) {
 		if (userID == null || userID.length() <= 0 || circleName == null || circleName.length() <= 0)
+			return null;
+		
+		//TODO: do we allow a user to be in 2 circles of the same name? probably have to...
+		
+		//slightly obscure, but we are generating random numbers until we get an empty query response
+		//on the circle_id member. can't just use a datastore key because each member/column row needs
+		//to be unique but the circle_id will be repeated
+		Random r = new Random();
+		int count;
+		long id;
+		do {
+			id = r.nextLong();
+			Query q = new Query(TYPE).addFilter(CIRCLE_ID, Query.FilterOperator.EQUAL, id);
+			count = ds.prepare(q).countEntities(FetchOptions.Builder.withLimit(1));
+		} while ( count > 0 || id == -1);
+		
+		
+		Entity circle;
+
+		circle = new Entity(TYPE); //random datastore key
+		circle.setProperty(CIRCLE_NAME, circleName);
+		circle.setProperty(CIRCLE_ID, id);
+		circle.setProperty(USER_ID, userID);
+		circle.setProperty(USER_STATUS, UserManager.RED); //default
+		ds.put(circle);
+
+		Circle result = new Circle(id, circleName);
+		User u = UserManager.getUser(userID, ds);
+		result.addUser(u);
+		
+		return result;
+		
+	}
+	
+	public static void addUserToCircle(String userID, Long circleID, String circleName, DatastoreService ds) {
+		if (userID == null || userID.length() <= 0 || circleID == null)
 			return;
 		
 		//check to see if already exists
@@ -28,22 +79,15 @@ public class CircleManager {
 		Query q = new Query(TYPE).addFilter(USER_ID, Query.FilterOperator.EQUAL, userID);
 		
 		//add circle filter
-		q.addFilter(CIRCLE_NAME, Query.FilterOperator.EQUAL, circleName);
+		q.addFilter(CIRCLE_ID, Query.FilterOperator.EQUAL, circleID);
 		
-		PreparedQuery pq = ds.prepare(q);
+		int count = ds.prepare(q).countEntities(FetchOptions.Builder.withLimit(1));
 		
-		Entity result;
-		
-		try {
-			result = pq.asSingleEntity();
-		} catch (PreparedQuery.TooManyResultsException e) {
-			//error - more than one in server!
-			return;
-		}
-		
-		if (result == null) {
+		//if count > 0, then user is already in this circle
+		if (count < 1) {
 			//not found, put in datastore
 			Entity e = new Entity(TYPE);
+			e.setProperty(CIRCLE_ID, circleID);
 			e.setProperty(CIRCLE_NAME, circleName);
 			e.setProperty(USER_ID, userID);
 			e.setProperty(USER_STATUS, UserManager.RED); //set default to red?
@@ -52,12 +96,12 @@ public class CircleManager {
 		}
 	}
 	
-	public static void setStatusForCircle(String userID, Integer status, String circleName, DatastoreService ds) {
+	public static void setStatusForCircle(String userID, Integer status, Long circleID, DatastoreService ds) {
 		//add user filter
 		Query q = new Query(TYPE).addFilter(USER_ID, Query.FilterOperator.EQUAL, userID);
 		
 		//add circle filter
-		q.addFilter(CIRCLE_NAME, Query.FilterOperator.EQUAL, circleName);
+		q.addFilter(CIRCLE_ID, Query.FilterOperator.EQUAL, circleID);
 		
 		PreparedQuery pq = ds.prepare(q);
 		
@@ -73,52 +117,42 @@ public class CircleManager {
 		result.setProperty(USER_STATUS, status);
 		ds.put(result);
 	}
-	
-	public static List<Circle> getCirclesByUser(String userID,  DatastoreService ds) {
-		List<String> circleNames = getCircleNames(userID, ds);
-		List<Circle> result = new LinkedList<Circle>();
-		
-		for(String circleName : circleNames) {
-			Circle c = getCircle(circleName, userID, ds);
-			result.add(c);
-		}
-		
-		return result;
-	}
+
 	
 	//NOTE: DOES NOT INCLUDE SPECIFIED USER IN CIRCLES
-	public static Circle getCircle(String circleName, String userID,  DatastoreService ds) {
-		if (circleName == null || circleName.length() <= 0)
-			return null;
+	public static Circle getCircleWithUsers(long circleID, String circleName, String userID,  DatastoreService ds) {
 		
-		Circle result = new Circle(circleName);
 		
-		Query q = new Query(TYPE).addFilter(CIRCLE_NAME, Query.FilterOperator.EQUAL, circleName);
+		Query q = new Query(TYPE).addFilter(CIRCLE_ID, Query.FilterOperator.EQUAL, circleID);
 		
 		Iterator<Entity> pq = ds.prepare(q).asIterator();
+		
+		Circle result = new Circle(circleID, circleName);
 
 		while(pq.hasNext()) {
 			Entity e = pq.next();
 			String user = (String) e.getProperty(USER_ID);
 			if(!user.equalsIgnoreCase(userID)) { //don't add specified current user
 				User u = UserManager.getUser(user, ds);
-				if (u.status == UserManager.OTHER) { //if status is set to "other" get specific status
-					long specStatus = (Long) e.getProperty(USER_STATUS);
-					u.status = (int) specStatus;
+				if (u != null) {
+					if (u.status == UserManager.OTHER) { //if status is set to "other" get specific status
+						long specStatus = (Long) e.getProperty(USER_STATUS);
+						u.status = (int) specStatus;
+					}
+					result.addUser(u);
 				}
-				result.users.add(u);
 			}
 		}
 		
 		return result;
 	}
 		
-	
-	public static List<String> getCircleNames(String userID,  DatastoreService ds) {
+	//returns circle object with uninitialized user list (lightweight)
+	public static List<Circle> getCircleNames(String userID,  DatastoreService ds) {
 		if (userID == null || userID.length() <= 0)
 			return null;
 		
-		List<String> result = new LinkedList<String>();
+		List<Circle> result = new LinkedList<Circle>();
 		
 		Query q = new Query(TYPE).addFilter(USER_ID, Query.FilterOperator.EQUAL, userID);
 		
@@ -127,7 +161,8 @@ public class CircleManager {
 		while(pq.hasNext()) {
 			Entity e = pq.next();
 			String circleName = (String) e.getProperty(CIRCLE_NAME);
-			result.add(circleName);
+			Long circleID = (Long) e.getProperty(CIRCLE_ID);
+			result.add(new Circle(circleID, circleName));
 		}
 		
 		return result;

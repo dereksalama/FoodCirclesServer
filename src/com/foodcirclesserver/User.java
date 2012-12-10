@@ -13,10 +13,13 @@ public class User {
 	
 	public Integer status;
 	
+	//should we be sending this around?
 	@SerializedName("current_train")
-	public String currentTrainID;
+	public Long currentTrainID;
 	
-	public User(String userID, String name, Integer status, String currentTrainID) {
+	public User (){};
+	
+	public User(String userID, String name, Integer status, Long currentTrainID) {
 		this.userID = userID;
 		this.name = name;
 		this.status = status;
