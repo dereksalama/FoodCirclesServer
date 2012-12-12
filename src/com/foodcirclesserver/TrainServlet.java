@@ -14,9 +14,11 @@
  * train in json
  * 
  * -Derek
+ * 
+ * NOT USING FOR NOW
  */
 
-package com.foodcirclesserver;
+/*package com.foodcirclesserver;
 
 import java.io.IOException;
 import java.text.ParseException;
@@ -98,3 +100,4 @@ public class TrainServlet extends HttpServlet {
 	}
 
 }
+*/

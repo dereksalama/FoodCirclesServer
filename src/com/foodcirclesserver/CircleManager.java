@@ -138,8 +138,12 @@ public class CircleManager {
 					if (u.status == UserManager.OTHER) { //if status is set to "other" get specific status
 						long specStatus = (Long) e.getProperty(USER_STATUS);
 						u.status = (int) specStatus;
+						if (specStatus == UserManager.RED) { //if unavailable for this circle
+							u.desiredLocation = null;
+							u.desiredTime = null;
+						}
+						result.addUser(u);
 					}
-					result.addUser(u);
 				}
 			}
 		}

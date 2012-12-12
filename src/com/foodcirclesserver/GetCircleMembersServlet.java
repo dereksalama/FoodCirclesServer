@@ -49,6 +49,7 @@ public class GetCircleMembersServlet extends HttpServlet {
 			result = constructAllFriendsCircle(userID, accessToken, ds);
 		} else {
 			result = CircleManager.getCircleWithUsers(circleID, circleName, userID, ds);
+			result.generateCurrentEvents();
 		}
 		
 		if (result == null) {

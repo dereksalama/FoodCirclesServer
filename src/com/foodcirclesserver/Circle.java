@@ -11,6 +11,10 @@ public class Circle {
 	
 	private List<User> users;
 	
+	//give users this list of loc/times
+	//currently in circle so user can join their friends
+	private List<String> currentEvents;
+	
 	public Circle() {};
 	
 	public Circle(Long id, String name) {
@@ -32,6 +36,25 @@ public class Circle {
 	
 	public List<User> getUsers() {
 		return users;
+	}
+	
+	public List<String> generateCurrentEvents() {
+		if (users != null) {
+			currentEvents = new LinkedList<String>();
+			for (User u : users) {
+				String eventString = u.getEventString();
+				if (eventString != null)
+					currentEvents.add(eventString);
+			}
+			
+			return currentEvents;
+		} else {
+			return null;
+		}
+	}
+	
+	public List<String> getCurrentEvents() {
+		return currentEvents;
 	}
 	
 	

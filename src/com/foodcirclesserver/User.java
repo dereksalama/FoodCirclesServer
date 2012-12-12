@@ -1,6 +1,7 @@
 package com.foodcirclesserver;
 
 
+
 import com.google.gson.annotations.SerializedName;
 
 public class User {
@@ -10,20 +11,48 @@ public class User {
 	
 	public String name;
 	
-	
 	public Integer status;
 	
-	//should we be sending this around?
-	@SerializedName("current_train")
-	public Long currentTrainID;
+	@SerializedName("time")
+	public String desiredTime;
+	//having trouble using real date stuff, just use hh:mm time stuff for now
+	
+	@SerializedName("location")
+	public String desiredLocation;
+	
 	
 	public User (){};
 	
-	public User(String userID, String name, Integer status, Long currentTrainID) {
+	public User(String userID, String name, Integer status) {
 		this.userID = userID;
 		this.name = name;
 		this.status = status;
-		this.currentTrainID = currentTrainID;
+		
+		desiredTime = null;
+		desiredLocation = null;
+	}
+	
+	public User(String userID, String name, Integer status, String desiredTime, String desiredLocation) {
+		this.userID = userID;
+		this.name = name;
+		this.status = status;
+		
+		this.desiredTime = desiredTime;
+		this.desiredLocation = desiredLocation;
+		
+	}
+	
+	public String getEventString() {
+		if (desiredLocation == null && desiredLocation == null)
+			return null;
+		
+		String result = "";
+		if (desiredLocation != null)
+			result += desiredLocation;
+		if (desiredTime != null)
+			result += desiredTime;
+		
+		return result;
 	}
 	
 

@@ -1,6 +1,5 @@
 package com.foodcirclesserver;
 
-
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.gson.Gson;
@@ -64,7 +63,6 @@ public class TestBench {
 		
 		reqUrl = "http://localhost:8888/circle?action=create&user_id=" + userID + "&circle_name=test";
 		String newCircle = JsonHelper.getJSONfromUrl(reqUrl);
-//		System.out.println("new circle: " + newCircle);
 		Gson gson = new Gson();
 		JsonParser parser = new JsonParser();
 		JsonElement circle = parser.parse(newCircle);
@@ -77,14 +75,17 @@ public class TestBench {
 		Circle test2 = CircleManager.createCircle("test2", userID, ds);
 		CircleManager.addUserToCircle( jakeID,test2.id, test2.name, ds);
 		
+		//set jake for foco @ 6:30
+		reqUrl = "http://localhost:8888/user?user_id=" + jakeID + "&action=loc_time&location=foco&time=6:30";
+		JsonHelper.getJSONfromUrl(reqUrl);
 		
 		//set luke as available
 		reqUrl = "http://localhost:8888/user?user_id=" + lukeID + "&action=update&status=0";
 		JsonHelper.getJSONfromUrl(reqUrl);
 		
-		//set Jake as green for test, yellow for test2
+		//set Jake as green for test, red for test2
 		reqUrl = "http://localhost:8888/user?user_id=" + jakeID + "&action=circle_statuses" +
-					"&circles=" + test.id + ",0;" + test2.id + ",1";
+					"&circles=" + test.id + ",0;" + test2.id + ",0";
 		JsonHelper.getJSONfromUrl(reqUrl);
 		
 		//get circles

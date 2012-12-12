@@ -3,9 +3,11 @@
  * -users have "current_train" field, so query user table to get members of a train
  * 
  * -Derek
+ * 
+ * NOT USING FOR NOW
  */
 
-package com.foodcirclesserver;
+/*package com.foodcirclesserver;
 
 import java.text.DateFormat;
 import java.util.Date;
@@ -67,10 +69,10 @@ public class TrainManager {
 		return result;
 	}
 	
-	/*
+	
 	 * -need to generate custom key so returns train w/ key
 	 * -if no name is included, creates default
-	 */
+	 
 	public static Train createTrain(String trainName, Date time, String location, DatastoreService ds) {
 		
 		DateFormat df = DateFormat.getTimeInstance();
@@ -148,3 +150,4 @@ public class TrainManager {
 	}
 
 }
+*/

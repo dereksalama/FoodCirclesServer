@@ -4,14 +4,16 @@
  *  	-Action specifies what you want to do
  *  	-current operations:
  *  		-create: &name=... (first_last)-> initializes user 
- *  		-update: &status=...&train=... -> set (global) status and current train
- *  		-circle_statuses: &cricles=circle1.id,#;circle2.id,# (comma between circle id and status, semicolon
+ *  		-update: &status=... -> set (global) status (note: going red deletes status and time)
+ *  		-circle_statuses: &circles=circle1.id,#;circle2.id,# (comma between circle id and status, semicolon
  *  														between different circles)
- *  							--> set statuses for specific trains
+ *  		-status_loc_time: &status=...&location=...&time=...
+ *  		-loc_time: &location=...&time=... (does not affect status)
  *  
  *  -Derek Salama
  */
 package com.foodcirclesserver;
+
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -35,6 +37,9 @@ public class UserServlet extends HttpServlet {
 		
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 		
+		Integer status;
+		String location;
+		
 		
 		switch (action) {
 		
@@ -43,13 +48,9 @@ public class UserServlet extends HttpServlet {
 			String parsedName = name.replace('_', ' '); //can't do request with spaces, so use underscores and replace
 			UserManager.createUser(userID, parsedName, ds);
 			break;
-		case "update":
-			Integer status = Integer.parseInt(req.getParameter(UserManager.STATUS));
-			String currentTrainString = req.getParameter(UserManager.CURRENT_TRAIN);
-			Long currentTrain = null;
-			if (currentTrainString != null)
-				currentTrain = Long.parseLong(currentTrainString);
-			UserManager.updateUser(userID, status, currentTrain, ds);
+		case "update_status":
+			status = Integer.parseInt(req.getParameter(UserManager.STATUS));
+			UserManager.updateStatus(userID, status, ds);
 			break;
 		case "circle_statuses": //set status for indiv circles
 			//first set status to other
@@ -63,6 +64,16 @@ public class UserServlet extends HttpServlet {
 				CircleManager.setStatusForCircle(userID, circleStatus, circleID, ds);
 			}
 			break;
+		case "status_loc_time": //update status, location and time
+			status = Integer.parseInt(req.getParameter(UserManager.STATUS));
+			UserManager.updateStatus(userID, status, ds);
+			//don't break - fall through to do location and time 
+		case "loc_time": //leave status, just location and time
+			String timeString = req.getParameter(UserManager.DESIRED_TIME);
+			location = req.getParameter(UserManager.DESIRED_LOCATION);
+			UserManager.updateLocationAndTime(userID, timeString, location, ds);
+			break;
+
 		default:
 			System.out.println("User Servlet: no action matched");
 			break;
