@@ -1,12 +1,13 @@
 /*
  * CircleServlet - add user to circle or create new
- * mandatory params: action, circle_name, user_id
+ * mandatory params: action, user_id
  * 
  * add:
  * 	additional param: circle_id (long)
  * 	resp: none
  * 
  * create:
+ * 	additional param: circle_name
  * 	resp: new circle 
  * 
  * 
@@ -35,11 +36,6 @@ public class CircleServlet extends HttpServlet {
 		if (userID == null || userID.length() <= 0)
 			return; //invalid user parameter
 		
-		String circleName = req.getParameter(CircleManager.CIRCLE_NAME);
-		if (circleName == null || circleName.length() <= 0)
-			return;
-
-		
 		String action = req.getParameter("action");
 		
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
@@ -48,6 +44,9 @@ public class CircleServlet extends HttpServlet {
 		
 		switch(action) {
 		case "create" :
+			String circleName = req.getParameter(CircleManager.CIRCLE_NAME);
+			if (circleName == null || circleName.length() <= 0)
+				return;
 			Circle newCircle = CircleManager.createCircle(circleName, userID, ds);
 			String jString = gson.toJson(newCircle);
 			try {
@@ -60,7 +59,7 @@ public class CircleServlet extends HttpServlet {
 			Long circleID = Long.parseLong(req.getParameter(CircleManager.CIRCLE_ID));
 			if (circleID == null)
 				return;
-			CircleManager.addUserToCircle(userID, circleID, circleName, ds);
+			CircleManager.addUserToCircle(userID, circleID, ds);
 			break;
 		}
 	}

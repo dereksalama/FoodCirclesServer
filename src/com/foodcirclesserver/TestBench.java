@@ -1,8 +1,13 @@
 package com.foodcirclesserver;
 
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.gson.Gson;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 
@@ -54,7 +59,7 @@ public class TestBench {
 		
 		//servlet testing
 		//create users
-		String reqUrl = "http://localhost:8888/user?user_id=" + userID + "&action=create&name=Derek_Salama";
+/*		String reqUrl = "http://localhost:8888/user?user_id=" + userID + "&action=create&name=Derek_Salama";
 		JsonHelper.getJSONfromUrl(reqUrl);
 		
 		//too lazy to make all that way...
@@ -68,12 +73,12 @@ public class TestBench {
 		JsonElement circle = parser.parse(newCircle);
 		Circle test = gson.fromJson(circle, Circle.class);
 		
-		CircleManager.addUserToCircle(jakeID, test.id, "test", ds);
-		CircleManager.addUserToCircle( lukeID,test.id, "test", ds);
+		CircleManager.addUserToCircle(jakeID, test.id, ds);
+		CircleManager.addUserToCircle( lukeID,test.id, ds);
 		
 		
 		Circle test2 = CircleManager.createCircle("test2", userID, ds);
-		CircleManager.addUserToCircle( jakeID,test2.id, test2.name, ds);
+		CircleManager.addUserToCircle( jakeID,test2.id,  ds);
 		
 		//set jake for foco @ 6:30
 		reqUrl = "http://localhost:8888/user?user_id=" + jakeID + "&action=loc_time&location=foco&time=6:30";
@@ -105,8 +110,80 @@ public class TestBench {
 		reqUrl = "http://localhost:8888/getcirclemembers?user_id=" + userID + "&circle_name=All&circle_id=" + -1 +"&access_token=" + accessToken;
 		String allFriends = JsonHelper.getJSONfromUrl(reqUrl);
 		System.out.println("All Circle: " + allFriends);
+		*/
 		
+		List<Circle> circles = CircleManager.getCircleNames(userID, ds);
 		
+		Circle test = new Circle((long) 0,"error");
+		Circle test2 = new Circle((long) 0, "error");
+		
+		for (Circle c : circles) {
+			if (c.name.equalsIgnoreCase("test")) {
+				test = c;
+			} else if (c.name.equalsIgnoreCase("test2")) {
+				test2 = c;
+			}
+		}
+		
+		if (test.id == 0) {
+			System.out.println("Test not found");
+			return;
+		}
+		
+		if (test2.id == 0) {
+			System.out.println("Test2 not found");
+			return;
+		}
+		
+		String text = "Froyo?";
+
+		Date date = new Date();
+		
+		//sending a message to test circle
+		String url = "http://localhost:8888/sendmessage?text="+text+"&time="+date+
+				"&user="+userID+"&circle_id="+test.id;
+		JsonHelper.getJSONfromUrl(url);
+		
+		//check messages for test circle
+		url = "http://localhost:8888/getchat?circle_id"+test.id;
+		JsonHelper.getJSONfromUrl(url);
+		
+		//send invite to luke for test2 from derek
+		url = "http://localhost:8888/sendinvite?circle_id"+test2.id+"&sender_id="+userID+
+				"&receiver_id" + lukeID;
+		JsonHelper.getJSONfromUrl(url);
+		
+		//get invites for luke
+		url = "http://localhost:8888/getinvites?receiver_id="+lukeID;
+		String jString = JsonHelper.getJSONfromUrl(url);
+		
+		Gson gson = new Gson();
+		JsonParser parser = new JsonParser();
+		
+		JsonArray jarray = parser.parse(jString).getAsJsonArray();
+		
+		List<CircleInvite> invites = new LinkedList<CircleInvite>();
+		for (JsonElement e : jarray) {
+			CircleInvite inv = gson.fromJson(e, CircleInvite.class);
+			invites.add(inv);
+		}
+		
+		//deny invite
+		url = "http://localhost:8888/invite?key="+invites.get(0).keyID+"&accepted="+false;
+		JsonHelper.getJSONfromUrl(url);
+		
+		//resend
+		url = "http://localhost:8888/sendinvite?circle_id"+test2.id+"&sender_id="+userID+
+				"&receiver_id" + lukeID;
+		JsonHelper.getJSONfromUrl(url);
+		
+		//accept
+		//id should not have changed
+		url = "http://localhost:8888/invite?key="+invites.get(0).keyID+"&accepted="+true;
+		JsonHelper.getJSONfromUrl(url);
+		
+		//check members of test2 as seen by derek
+		test2 = CircleManager.getCircleWithUsers(test2.id, userID, ds);
 
 	}
 

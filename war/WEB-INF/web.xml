@@ -77,6 +77,30 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	    <servlet-name>SendMessage</servlet-name>
 	    <url-pattern>/sendmessage</url-pattern>
 	</servlet-mapping>
+	<servlet>
+	    <servlet-name>GetInvites</servlet-name>
+	    <servlet-class>com.foodcirclesserver.GetInvitesServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>GetInvites</servlet-name>
+	    <url-pattern>/getinvites</url-pattern>
+	</servlet-mapping>
+	<servlet>
+	    <servlet-name>SendInvite</servlet-name>
+	    <servlet-class>com.foodcirclesserver.SendInviteServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>SendInvite</servlet-name>
+	    <url-pattern>/sendinvite</url-pattern>
+	</servlet-mapping>
+	<servlet>
+	    <servlet-name>InviteResponse</servlet-name>
+	    <servlet-class>com.foodcirclesserver.InviteResponseServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>InviteResponse</servlet-name>
+	    <url-pattern>/invite</url-pattern>
+	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 	</welcome-file-list>

@@ -70,7 +70,9 @@ public class CircleManager {
 		
 	}
 	
-	public static void addUserToCircle(String userID, Long circleID, String circleName, DatastoreService ds) {
+	
+	//NOTE: circle must exist first!!!
+	public static void addUserToCircle(String userID, Long circleID, DatastoreService ds) {
 		if (userID == null || userID.length() <= 0 || circleID == null)
 			return;
 		
@@ -85,13 +87,16 @@ public class CircleManager {
 		
 		//if count > 0, then user is already in this circle
 		if (count < 1) {
-			//not found, put in datastore
-			Entity e = new Entity(TYPE);
-			e.setProperty(CIRCLE_ID, circleID);
-			e.setProperty(CIRCLE_NAME, circleName);
-			e.setProperty(USER_ID, userID);
-			e.setProperty(USER_STATUS, UserManager.RED); //set default to red?
-			ds.put(e);
+			Circle c = getCircleByID(circleID, ds);
+			
+			if (c != null) {
+				Entity e = new Entity(TYPE);
+				e.setProperty(CIRCLE_ID, circleID);
+				e.setProperty(CIRCLE_NAME, c.name);
+				e.setProperty(USER_ID, userID);
+				e.setProperty(USER_STATUS, UserManager.RED); //set default to red?
+				ds.put(e);
+			}
 			
 		}
 	}
@@ -120,14 +125,14 @@ public class CircleManager {
 
 	
 	//NOTE: DOES NOT INCLUDE SPECIFIED USER IN CIRCLES
-	public static Circle getCircleWithUsers(long circleID, String circleName, String userID,  DatastoreService ds) {
+	public static Circle getCircleWithUsers(long circleID, String userID,  DatastoreService ds) {
 		
 		
 		Query q = new Query(TYPE).addFilter(CIRCLE_ID, Query.FilterOperator.EQUAL, circleID);
 		
 		Iterator<Entity> pq = ds.prepare(q).asIterator();
 		
-		Circle result = new Circle(circleID, circleName);
+		Circle result = getCircleByID(circleID, ds);
 
 		while(pq.hasNext()) {
 			Entity e = pq.next();
@@ -149,6 +154,22 @@ public class CircleManager {
 		}
 		
 		return result;
+	}
+	
+	
+	//TODO: replace if we create database for circle info
+	public static Circle getCircleByID(Long circleID, DatastoreService ds) {
+		
+		Query q = new Query(TYPE).addFilter(CIRCLE_ID, Query.FilterOperator.EQUAL, circleID);
+		List<Entity> circles = ds.prepare(q).asList(FetchOptions.Builder.withLimit(1));
+		if (circles != null && circles.size() > 0) {
+			Entity e = circles.get(0);
+			String name = (String) e.getProperty(CIRCLE_NAME);
+			return new Circle(circleID, name);
+		} else {
+			return null;
+		}
+		
 	}
 		
 	//returns circle object with uninitialized user list (lightweight)

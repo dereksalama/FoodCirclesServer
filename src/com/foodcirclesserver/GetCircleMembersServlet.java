@@ -2,7 +2,7 @@
  * GetCircleMembersServlet - get the users (excluding specified user) from given servlet
  * 
  * request:
- *"/getcirclemembers?user_id=...&circle_id=...&circle_name=..."
+ *"/getcirclemembers?user_id=...&circle_id=..."
  * -> if trying to get "All Friends" circle, must ALSO include access token
  * 			(&access_token=...)
  * 
@@ -33,11 +33,7 @@ public class GetCircleMembersServlet extends HttpServlet {
 		String userID = req.getParameter(UserManager.USER_ID);
 		if (userID == null || userID.length() <= 0)
 			return; //invalid user parameter
-		
-		String circleName = req.getParameter(CircleManager.CIRCLE_NAME);
-		if (circleName == null || circleName.length() <= 0)
-			return;
-		
+			
 		Long circleID = Long.parseLong(req.getParameter(CircleManager.CIRCLE_ID));
 		
 		Circle result;
@@ -48,7 +44,7 @@ public class GetCircleMembersServlet extends HttpServlet {
 			String accessToken = req.getParameter("access_token");
 			result = constructAllFriendsCircle(userID, accessToken, ds);
 		} else {
-			result = CircleManager.getCircleWithUsers(circleID, circleName, userID, ds);
+			result = CircleManager.getCircleWithUsers(circleID, userID, ds);
 			result.generateCurrentEvents();
 		}
 		
