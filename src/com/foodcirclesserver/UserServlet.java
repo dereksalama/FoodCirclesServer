@@ -41,18 +41,14 @@ public class UserServlet extends HttpServlet {
 		String location;
 		
 		
-		switch (action) {
-		
-		case "create":
+		if (action.equals("create")) {
 			String name = req.getParameter(UserManager.NAME);
 			String parsedName = name.replace('_', ' '); //can't do request with spaces, so use underscores and replace
 			UserManager.createUser(userID, parsedName, ds);
-			break;
-		case "update_status":
+		} else if (action.equals("update_status")) {
 			status = Integer.parseInt(req.getParameter(UserManager.STATUS));
 			UserManager.updateStatus(userID, status, ds);
-			break;
-		case "circle_statuses": //set status for indiv circles
+		} else if (action.equals("circle_statuses")) {
 			//first set status to other
 			UserManager.updateStatus(userID, UserManager.OTHER, ds);
 			String circleList = req.getParameter("circles");
@@ -63,22 +59,18 @@ public class UserServlet extends HttpServlet {
 				Integer circleStatus = Integer.parseInt(pair[1]);
 				CircleManager.setStatusForCircle(userID, circleStatus, circleID, ds);
 			}
-			break;
-		case "status_loc_time": //update status, location and time
+		} else if (action.equals("status_loc_time")) {
 			status = Integer.parseInt(req.getParameter(UserManager.STATUS));
 			UserManager.updateStatus(userID, status, ds);
-			//don't break - fall through to do location and time 
-		case "loc_time": //leave status, just location and time
-			String timeString = req.getParameter(UserManager.DESIRED_TIME);
-			location = req.getParameter(UserManager.DESIRED_LOCATION);
-			UserManager.updateLocationAndTime(userID, timeString, location, ds);
-			break;
-
-		default:
+			//don't break - fall through to do location and time
+			if (action.equals("loc_time")) {
+				String timeString = req.getParameter(UserManager.DESIRED_TIME);
+				location = req.getParameter(UserManager.DESIRED_LOCATION);
+				UserManager.updateLocationAndTime(userID, timeString, location, ds);
+			}
+		} else {
 			System.out.println("User Servlet: no action matched");
-			break;
-			
-		}
+		}			
 	}
 
 }

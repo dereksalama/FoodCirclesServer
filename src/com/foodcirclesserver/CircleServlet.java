@@ -42,8 +42,7 @@ public class CircleServlet extends HttpServlet {
 		Gson gson = new Gson();
 		resp.setContentType("text/json");
 		
-		switch(action) {
-		case "create" :
+		if (action.equals("create")) {
 			String circleName = req.getParameter(CircleManager.CIRCLE_NAME);
 			if (circleName == null || circleName.length() <= 0)
 				return;
@@ -54,13 +53,11 @@ public class CircleServlet extends HttpServlet {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-			break;
-		case "add" :
+		} else if (action.equals("add")) {
 			Long circleID = Long.parseLong(req.getParameter(CircleManager.CIRCLE_ID));
 			if (circleID == null)
 				return;
 			CircleManager.addUserToCircle(userID, circleID, ds);
-			break;
 		}
 	}
 

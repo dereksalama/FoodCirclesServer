@@ -45,7 +45,7 @@ public class GroupChatManager {
 		//only get # specified
 		List<Entity> messages = ds.prepare(q).asList(FetchOptions.Builder.withLimit(numOfMessages));
 		
-		List<GroupChatMessage> result = new LinkedList<>();
+		List<GroupChatMessage> result = new LinkedList<GroupChatMessage>();
 		for (Entity e : messages) {
 			String userID = (String) e.getProperty(USER_ID);
 			Long circleID = (Long) e.getProperty(CIRCLE_ID);
