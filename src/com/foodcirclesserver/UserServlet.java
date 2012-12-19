@@ -68,6 +68,10 @@ public class UserServlet extends HttpServlet {
 				location = req.getParameter(UserManager.DESIRED_LOCATION);
 				UserManager.updateLocationAndTime(userID, timeString, location, ds);
 			}
+		} else if (action.equals("loc_time")) {
+			String timeString = req.getParameter(UserManager.DESIRED_TIME);
+			location = req.getParameter(UserManager.DESIRED_LOCATION);
+			UserManager.updateLocationAndTime(userID, timeString, location, ds);
 		} else {
 			System.out.println("User Servlet: no action matched");
 		}			
