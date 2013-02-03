@@ -3,6 +3,8 @@ package com.foodcirclesserver;
 import java.io.IOException;
 import javax.servlet.http.*;
 
+import com.foodcirclesserver.util.TestBench;
+
 @SuppressWarnings("serial")
 public class FoodCirclesServerServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)

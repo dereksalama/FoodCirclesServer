@@ -1,5 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
-<%@ page import="com.foodcirclesserver.Facebook" %>
+<%@ page import="com.foodcirclesserver.user.Facebook" %>
 
 <html>
   <head>

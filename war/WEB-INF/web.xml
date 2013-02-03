@@ -22,7 +22,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>GetFriends</servlet-name>
-	    <servlet-class>com.foodcirclesserver.GetFriendsServlet</servlet-class>
+	    <servlet-class>com.foodcirclesserver.user.GetFriendsServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>GetFriends</servlet-name>
@@ -30,7 +30,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>GetCircles</servlet-name>
-	    <servlet-class>com.foodcirclesserver.GetCirclesServlet</servlet-class>
+	    <servlet-class>com.foodcirclesserver.circles.GetCirclesServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>GetCircles</servlet-name>
@@ -38,7 +38,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>User</servlet-name>
-	    <servlet-class>com.foodcirclesserver.UserServlet</servlet-class>
+	    <servlet-class>com.foodcirclesserver.user.UserServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>User</servlet-name>
@@ -46,7 +46,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>GetCircleMembers</servlet-name>
-	    <servlet-class>com.foodcirclesserver.GetCircleMembersServlet</servlet-class>
+	    <servlet-class>com.foodcirclesserver.circles.GetCircleMembersServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>GetCircleMembers</servlet-name>
@@ -54,7 +54,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>Circle</servlet-name>
-	    <servlet-class>com.foodcirclesserver.CircleServlet</servlet-class>
+	    <servlet-class>com.foodcirclesserver.circles.CircleServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>Circle</servlet-name>
@@ -63,7 +63,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	
 	<servlet>
 	    <servlet-name>GetChat</servlet-name>
-	    <servlet-class>com.foodcirclesserver.GetChatServlet</servlet-class>
+	    <servlet-class>com.foodcirclesserver.chat.GetChatServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>GetChat</servlet-name>
@@ -71,7 +71,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>SendMessage</servlet-name>
-	    <servlet-class>com.foodcirclesserver.SendMessageServlet</servlet-class>
+	    <servlet-class>com.foodcirclesserver.chat.SendMessageServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>SendMessage</servlet-name>
@@ -79,7 +79,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>GetInvites</servlet-name>
-	    <servlet-class>com.foodcirclesserver.GetInvitesServlet</servlet-class>
+	    <servlet-class>com.foodcirclesserver.circles.GetInvitesServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>GetInvites</servlet-name>
@@ -87,7 +87,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>SendInvite</servlet-name>
-	    <servlet-class>com.foodcirclesserver.SendInviteServlet</servlet-class>
+	    <servlet-class>com.foodcirclesserver.circles.SendInviteServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>SendInvite</servlet-name>
@@ -95,7 +95,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>InviteResponse</servlet-name>
-	    <servlet-class>com.foodcirclesserver.InviteResponseServlet</servlet-class>
+	    <servlet-class>com.foodcirclesserver.circles.InviteResponseServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>InviteResponse</servlet-name>

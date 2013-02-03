@@ -1,0 +1,11 @@
+<!-- Indices written at Mon, 28 Jan 2013 05:49:26 UTC -->
+
+<datastore-indexes>
+
+    <!-- Used 1 time in query history -->
+    <datastore-index kind="group_message" ancestor="false" source="auto">
+        <property name="circle_id" direction="asc"/>
+        <property name="time" direction="desc"/>
+    </datastore-index>
+
+</datastore-indexes>
