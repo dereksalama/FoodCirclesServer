@@ -3,13 +3,13 @@
  * req: /user?user_id=...&action=...
  *  	-Action specifies what you want to do
  *  	-current operations:
- *  		-create: &name=... (first_last)-> initializes user 
+ *  		-create: &name=... (first_last)-> initializes user
  *  		-update: &status=... -> set (global) status (note: going red deletes status and time)
  *  		-circle_statuses: &circles=circle1.id,#;circle2.id,# (comma between circle id and status, semicolon
  *  														between different circles)
  *  		-status_loc_time: &status=...&location=...&time=...
  *  		-loc_time: &location=...&time=... (does not affect status)
- *  
+ *
  *  -Derek Salama
  */
 package com.foodcirclesserver.user;
@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.foodcirclesserver.circles.CircleManager;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 
 public class UserServlet extends HttpServlet {
 
@@ -31,21 +32,37 @@ public class UserServlet extends HttpServlet {
 		String userID = req.getParameter(UserManager.USER_ID);
 		if (userID == null || userID.length() <= 0)
 			return; //invalid user parameter
-		
+
 		String action = req.getParameter("action");
 		if (action == null)
 			return;
-		
+
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		
+
 		Integer status;
 		String location;
-		
-		
+
+
 		if (action.equals("create")) {
 			String name = req.getParameter(UserManager.NAME);
 			String parsedName = name.replace('_', ' '); //can't do request with spaces, so use underscores and replace
-			UserManager.createUser(userID, parsedName, ds);
+
+			String hashString = req.getParameter(UserManager.TOKEN_HASH);
+			Integer hash = Integer.parseInt(hashString);
+			UserManager.createUser(userID, parsedName, hash, ds);
+		} else if (action.equals("update_token")) {
+			String hashString = req.getParameter(UserManager.TOKEN_HASH);
+			Integer hash = Integer.parseInt(hashString);
+
+			String newHashString = req.getParameter("new_hash");
+			Integer newHash = Integer.parseInt(newHashString);
+
+			try {
+				UserManager.updateHash(newHash, hash, userID, ds);
+			} catch (EntityNotFoundException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		} else if (action.equals("update_status")) {
 			status = Integer.parseInt(req.getParameter(UserManager.STATUS));
 			UserManager.updateStatus(userID, status, ds);
@@ -75,8 +92,8 @@ public class UserServlet extends HttpServlet {
 			UserManager.updateLocationAndTime(userID, timeString, location, ds);
 		} else {
 			System.out.println("User Servlet: no action matched");
-		}			
+		}
 	}
 
 }
-	
+

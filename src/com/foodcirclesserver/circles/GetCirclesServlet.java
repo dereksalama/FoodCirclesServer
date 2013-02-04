@@ -1,6 +1,6 @@
 /*
  * GetCirclesServlet - fetch list of user's circles
- * 
+ *
  * request:
  *"/getcircles?user_id=..."
  *
@@ -23,6 +23,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.foodcirclesserver.user.UserManager;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.appengine.api.datastore.EntityNotFoundException;
 import com.google.gson.Gson;
 
 
@@ -35,27 +36,36 @@ public class GetCirclesServlet extends HttpServlet {
 		if (userID == null || userID.length() <= 0)
 			return; //invalid user parameter
 
-		
+
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
-		List<Circle > circleNames = CircleManager.getCircleNames(userID, ds);
-		
-		//add "All Friends" circle
-		Circle allFriends = new Circle(CircleManager.ALL_FRIENDS_ID, "All Friends"); 
-		circleNames.add(allFriends);
-		
-		Gson gson = new Gson();
-		String jString = gson.toJson(circleNames);
-//		System.out.println(jString);
-		
-		resp.setContentType("text/json");
-		
+
+		Integer tokenHash = Integer.parseInt(req.getParameter(UserManager.TOKEN_HASH));
 		try {
-			resp.getWriter().println(jString);
-		} catch (IOException e) {
+			if (UserManager.validateUser(tokenHash, userID, ds)) {
+				List<Circle > circleNames = CircleManager.getCircleNames(userID, ds);
+
+				//add "All Friends" circle
+				Circle allFriends = new Circle(CircleManager.ALL_FRIENDS_ID, "All Friends");
+				circleNames.add(allFriends);
+
+				Gson gson = new Gson();
+				String jString = gson.toJson(circleNames);
+//		System.out.println(jString);
+
+				resp.setContentType("text/json");
+
+				try {
+					resp.getWriter().println(jString);
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (EntityNotFoundException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 
 }
