@@ -17,7 +17,7 @@ public class GetInvitesServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -6972004172908534922L;
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		String userID = req.getParameter(InviteManager.RECEIVER_ID);
 		if (userID == null)
 			return;

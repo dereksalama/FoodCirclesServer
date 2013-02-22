@@ -29,7 +29,7 @@ public class GetChatServlet extends HttpServlet {
 	public static int DEFAULT_NUM_MESSAGES = 20;
 
 	@Override
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 
 		String circleString = req.getParameter(GroupChatManager.CIRCLE_ID);
 		Long circleID = Long.parseLong(circleString);

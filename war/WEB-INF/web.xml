@@ -37,12 +37,12 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	    <url-pattern>/getcircles</url-pattern>
 	</servlet-mapping>
 	<servlet>
-	    <servlet-name>User</servlet-name>
-	    <servlet-class>com.foodcirclesserver.user.UserServlet</servlet-class>
+	    <servlet-name>CreateUser</servlet-name>
+	    <servlet-class>com.foodcirclesserver.user.CreateUserServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
-	    <servlet-name>User</servlet-name>
-	    <url-pattern>/user</url-pattern>
+	    <servlet-name>CreateUser</servlet-name>
+	    <url-pattern>/createuser</url-pattern>
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>GetCircleMembers</servlet-name>
@@ -60,7 +60,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	    <servlet-name>Circle</servlet-name>
 	    <url-pattern>/circle</url-pattern>
 	</servlet-mapping>
-	
+
 	<servlet>
 	    <servlet-name>GetChat</servlet-name>
 	    <servlet-class>com.foodcirclesserver.chat.GetChatServlet</servlet-class>
@@ -100,6 +100,30 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	<servlet-mapping>
 	    <servlet-name>InviteResponse</servlet-name>
 	    <url-pattern>/invite</url-pattern>
+	</servlet-mapping>
+	<servlet>
+	    <servlet-name>UpdateToken</servlet-name>
+	    <servlet-class>com.foodcirclesserver.auth.UpdateTokenServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>UpdateToken</servlet-name>
+	    <url-pattern>/updatetoken</url-pattern>
+	</servlet-mapping>
+	<servlet>
+	    <servlet-name>UpdateStatus</servlet-name>
+	    <url-pattern>/updatestatus</url-pattern>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>UpdateStatus</servlet-name>
+	    <servlet-class>com.foodcirclesserver.user.UpdateStatusServlet</servlet-class>
+	</servlet-mapping>
+	<servlet>
+	    <servlet-name>UpdateCircleStatus</servlet-name>
+	    <url-pattern>/updatecirclestatus</url-pattern>
+	</servlet>
+	<servlet-mapping>
+	    <servlet-name>UpdateCircleStatus</servlet-name>
+	    <servlet-class>com.foodcirclesserver.circles.UpdateCircleStatusServlet</servlet-class>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

@@ -24,7 +24,7 @@ public class SendMessageServlet extends HttpServlet {
 	private static final long serialVersionUID = -1346960197002723585L;
 
 	//TODO: notify other members in circle!!
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		String text = req.getParameter(GroupChatManager.TEXT);
 		String timeString = req.getParameter(GroupChatManager.TIME);
 		

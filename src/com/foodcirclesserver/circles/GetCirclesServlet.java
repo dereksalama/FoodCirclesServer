@@ -30,11 +30,12 @@ import com.google.gson.Gson;
 public class GetCirclesServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 3911038485119324197L;
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		//real code
 		String userID = req.getParameter(UserManager.USER_ID);
-		if (userID == null || userID.length() <= 0)
-			return; //invalid user parameter
+		if (userID == null || userID.length() <= 0) {
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
+		}
 
 
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
@@ -50,18 +51,13 @@ public class GetCirclesServlet extends HttpServlet {
 
 				Gson gson = new Gson();
 				String jString = gson.toJson(circleNames);
-//		System.out.println(jString);
 
 				resp.setContentType("text/json");
 
-				try {
-					resp.getWriter().println(jString);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				resp.getWriter().println(jString);
 			}
 		} catch (EntityNotFoundException e) {
-			// TODO Auto-generated catch block
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 			e.printStackTrace();
 		}
 

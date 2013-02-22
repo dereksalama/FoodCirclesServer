@@ -26,7 +26,7 @@ public class FBOAuth extends HttpServlet {
 	private static final long serialVersionUID = 8334594117407174449L;
 	private static final String REDIRECT = "/logintest.jsp";
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) throws MalformedURLException {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws MalformedURLException {
 		//TestBench.main();
         String code = req.getParameter("code");
         if (code != null && code.length() > 0) {

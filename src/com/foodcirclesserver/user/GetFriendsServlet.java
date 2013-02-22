@@ -35,7 +35,7 @@ public class GetFriendsServlet extends HttpServlet {
 
 	private static final long serialVersionUID = 2707498412415996993L;
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		//real code
 		String userID = req.getParameter(UserManager.USER_ID);
 		if (userID == null || userID.length() <= 0)

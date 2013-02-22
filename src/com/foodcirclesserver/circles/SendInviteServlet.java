@@ -16,7 +16,7 @@ public class SendInviteServlet extends HttpServlet {
 	private static final long serialVersionUID = -5354835351160362455L;
 
 	//Should this be POST?
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		String circleIDString = req.getParameter(InviteManager.CIRCLE_ID);
 		Long circleID = Long.parseLong(circleIDString);
 

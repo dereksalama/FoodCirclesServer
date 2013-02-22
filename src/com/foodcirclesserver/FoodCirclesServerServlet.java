@@ -7,7 +7,7 @@ import com.foodcirclesserver.util.TestBench;
 
 @SuppressWarnings("serial")
 public class FoodCirclesServerServlet extends HttpServlet {
-	public void doGet(HttpServletRequest req, HttpServletResponse resp)
+	public void doPost(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {
 		TestBench.main();
 		resp.setContentType("text/plain");

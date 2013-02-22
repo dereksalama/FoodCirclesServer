@@ -17,7 +17,7 @@ public class InviteResponseServlet extends HttpServlet {
 	private static final long serialVersionUID = 2101971148915359984L;
 
 	//post?
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		String keyIDString = req.getParameter("key");
 		Long keyID = Long.parseLong(keyIDString);
 

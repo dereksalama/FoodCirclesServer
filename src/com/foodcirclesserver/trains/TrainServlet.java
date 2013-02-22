@@ -38,7 +38,7 @@ public class TrainServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = -7891651075392263257L;
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		String userID = req.getParameter(UserManager.USER_ID);
 	
 		String action = req.getParameter("action");

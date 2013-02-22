@@ -26,7 +26,7 @@ public class GetTrainServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -881132405857046474L;
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		Long trainID = Long.parseLong(req.getParameter(TrainManager.TRAIN_ID));
 		if (trainID == null || trainID == 0)
 			return;

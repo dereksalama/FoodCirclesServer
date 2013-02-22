@@ -32,7 +32,7 @@ public class CircleServlet extends HttpServlet {
 	
 	private static final long serialVersionUID = -3495539797716469126L;
 
-	public void doGet(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
 		String userID = req.getParameter(UserManager.USER_ID);
 		if (userID == null || userID.length() <= 0)
 			return; //invalid user parameter

@@ -90,18 +90,21 @@ public class UserManager {
 		Entity user;
 
 		try {
+			//User already exists
 			user = ds.get(userKey);
-			//user in ds, do nothing
+			if (!validateUser(tokenHash, userID, ds)) {
+				throw new IllegalStateException("Invalid hash");
+			}
 		} catch (EntityNotFoundException e) {
 			//user not in ds
 			user = new Entity(USER, userID);
-			user.setProperty(USER_ID, userID);
-			user.setProperty(NAME, name);
-			user.setProperty(STATUS, RED);
 			user.setProperty(TOKEN_HASH, tokenHash);
-			ds.put(user);
 
 		}
+		user.setProperty(USER_ID, userID);
+		user.setProperty(NAME, name);
+		user.setProperty(STATUS, RED);
+		ds.put(user);
 
 	}
 
