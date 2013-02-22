@@ -58,15 +58,15 @@ public class UserManager {
 		ds.put(user);
 	}
 
-	public static boolean validateUser(Integer tokenHash, String userID, DatastoreService ds) throws EntityNotFoundException {
+	public static boolean validateUser(String tokenHash, String userID, DatastoreService ds) throws EntityNotFoundException {
 		Key userKey = KeyFactory.createKey(USER, userID);
 
 		Entity user = ds.get(userKey);
-		Integer storedHash = (Integer) user.getProperty(TOKEN_HASH);
-		return storedHash == tokenHash;
+		String storedHash =  (String) user.getProperty(TOKEN_HASH);
+		return storedHash.equals(tokenHash);
 	}
 
-	public static void updateHash(Integer newHash, Integer oldHash, String userID, DatastoreService ds) throws EntityNotFoundException {
+	public static void updateHash(String newHash, String oldHash, String userID, DatastoreService ds) throws EntityNotFoundException {
 		if(validateUser(oldHash, userID, ds)) {
 			Key userKey = KeyFactory.createKey(USER, userID);
 
@@ -76,7 +76,7 @@ public class UserManager {
 		}
 	}
 
-	public static void createUser(String userID, String name, Integer tokenHash, DatastoreService ds) {
+	public static void createUser(String userID, String name, String tokenHash, DatastoreService ds) {
 
 		if (userID == null || userID.length() <= 0) {
 			System.out.println("createUser error: null  or 0 value");

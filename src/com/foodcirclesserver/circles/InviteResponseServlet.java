@@ -34,7 +34,7 @@ public class InviteResponseServlet extends HttpServlet {
 		try {
 			invite = ds.get(key);
 			String receiverID = (String) invite.getProperty(InviteManager.RECEIVER_ID);
-			Integer tokenHash = Integer.parseInt(req.getParameter(UserManager.TOKEN_HASH));
+			String tokenHash = (req.getParameter(UserManager.TOKEN_HASH));
 
 			if (UserManager.validateUser(tokenHash, receiverID, ds)) {
 

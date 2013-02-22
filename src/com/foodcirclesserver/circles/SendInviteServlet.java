@@ -26,7 +26,7 @@ public class SendInviteServlet extends HttpServlet {
 		if (circleID == null || senderID == null || receiverID == null)
 			return;
 
-		Integer tokenHash = Integer.parseInt(req.getParameter(UserManager.TOKEN_HASH));
+		String tokenHash = (req.getParameter(UserManager.TOKEN_HASH));
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 
 		try {

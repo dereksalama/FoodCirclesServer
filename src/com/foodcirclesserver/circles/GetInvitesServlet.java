@@ -22,7 +22,7 @@ public class GetInvitesServlet extends HttpServlet {
 		if (userID == null)
 			return;
 
-		Integer tokenHash = Integer.parseInt(req.getParameter(UserManager.TOKEN_HASH));
+		String tokenHash = (req.getParameter(UserManager.TOKEN_HASH));
 
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 

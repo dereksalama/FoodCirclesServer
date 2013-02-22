@@ -30,10 +30,11 @@ public class CreateUserServlet extends HttpServlet {
 		String parsedName = name.replace('_', ' '); //can't do request with spaces, so use underscores and replace
 
 		String hashString = req.getParameter(UserManager.TOKEN_HASH);
-		Integer hash = Integer.parseInt(hashString);
-		UserManager.createUser(userID, parsedName, hash, ds);
-
-
+		try {
+			UserManager.createUser(userID, parsedName, hashString, ds);
+		} catch (IllegalStateException e) {
+			resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
+		}
 	}
 
 }

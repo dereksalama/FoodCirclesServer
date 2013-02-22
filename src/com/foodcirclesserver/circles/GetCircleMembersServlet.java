@@ -50,7 +50,7 @@ public class GetCircleMembersServlet extends HttpServlet {
 			String accessToken = req.getParameter("access_token");
 			result = constructAllFriendsCircle(userID, accessToken, ds);
 		} else {
-			Integer hash = Integer.parseInt(req.getParameter(UserManager.TOKEN_HASH));
+			String hash = (req.getParameter(UserManager.TOKEN_HASH));
 			try {
 				if (UserManager.validateUser(hash, userID, ds)) {
 					result = CircleManager.getCircleWithUsers(circleID, userID, ds);

@@ -40,7 +40,7 @@ public class GetCirclesServlet extends HttpServlet {
 
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 
-		Integer tokenHash = Integer.parseInt(req.getParameter(UserManager.TOKEN_HASH));
+		String tokenHash = (req.getParameter(UserManager.TOKEN_HASH));
 		try {
 			if (UserManager.validateUser(tokenHash, userID, ds)) {
 				List<Circle > circleNames = CircleManager.getCircleNames(userID, ds);

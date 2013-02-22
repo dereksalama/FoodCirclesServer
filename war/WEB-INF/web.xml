@@ -111,19 +111,19 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" version="2.5">
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>UpdateStatus</servlet-name>
-	    <url-pattern>/updatestatus</url-pattern>
+	    <servlet-class>com.foodcirclesserver.user.UpdateStatusServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>UpdateStatus</servlet-name>
-	    <servlet-class>com.foodcirclesserver.user.UpdateStatusServlet</servlet-class>
+	    <url-pattern>/updatestatus</url-pattern>
 	</servlet-mapping>
 	<servlet>
 	    <servlet-name>UpdateCircleStatus</servlet-name>
-	    <url-pattern>/updatecirclestatus</url-pattern>
+	    <servlet-class>com.foodcirclesserver.circles.UpdateCircleStatusServlet</servlet-class>
 	</servlet>
 	<servlet-mapping>
 	    <servlet-name>UpdateCircleStatus</servlet-name>
-	    <servlet-class>com.foodcirclesserver.circles.UpdateCircleStatusServlet</servlet-class>
+	    <url-pattern>/updatecirclestatus</url-pattern>
 	</servlet-mapping>
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>

@@ -27,6 +27,8 @@ public class UpdateCircleStatusServlet extends HttpServlet {
 			Integer circleStatus = Integer.parseInt(pair[1]);
 			CircleManager.setStatusForCircle(userID, circleStatus, circleID, ds);
 		}
+
+		resp.setStatus(HttpServletResponse.SC_ACCEPTED);
 	}
 
 }

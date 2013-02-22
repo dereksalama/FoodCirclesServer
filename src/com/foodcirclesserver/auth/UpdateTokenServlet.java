@@ -21,13 +21,11 @@ public class UpdateTokenServlet extends HttpServlet {
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 		String userID = req.getParameter(UserManager.USER_ID);
 		String hashString = req.getParameter(UserManager.TOKEN_HASH);
-		Integer hash = Integer.parseInt(hashString);
 
 		String newHashString = req.getParameter("new_hash");
-		Integer newHash = Integer.parseInt(newHashString);
 
 		try {
-			UserManager.updateHash(newHash, hash, userID, ds);
+			UserManager.updateHash(newHashString, hashString, userID, ds);
 			resp.setStatus(HttpServletResponse.SC_OK);
 		} catch (EntityNotFoundException e) {
 			e.printStackTrace();
