@@ -1,20 +1,3 @@
-/*
- * CircleServlet - add user to circle or create new
- * mandatory params: action, user_id
- *
- * add:
- * 	additional param: circle_id (long)
- * 	resp: none
- *
- * create:
- * 	additional param: circle_name
- * 	resp: new circle
- *
- *
- *
- * NOTE: creating a circle really creates one! make sure that is what the user intends to do or you
- * will start getting duplicates
- */
 package com.foodcirclesserver.circles;
 
 import java.io.IOException;
@@ -29,20 +12,20 @@ import com.foodcirclesserver.user.UserManager;
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
 import com.google.appengine.api.datastore.EntityNotFoundException;
-import com.google.gson.Gson;
 
-public class CircleServlet extends HttpServlet {
+public class AddToCircleServlet extends HttpServlet {
 
-	private static final long serialVersionUID = -3495539797716469126L;
-
+	private static final long serialVersionUID = -6837562522339503309L;
 	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String userID = req.getParameter(UserManager.USER_ID);
-		String circleName = req.getParameter(CircleManager.CIRCLE_NAME);
+		String circleIDString = req.getParameter(CircleManager.CIRCLE_ID);
 
-		if (userID == null || userID.length() <= 0 || circleName == null || circleName.length() <= 0) {
+		if (userID == null || userID.length() <= 0 || circleIDString == null || circleIDString.length() <= 0) {
 			resp.sendError(HttpStatus.SC_BAD_REQUEST);
 			return;
 		}
+
+		Long circleID = Long.parseLong(circleIDString);
 
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
 
@@ -59,17 +42,8 @@ public class CircleServlet extends HttpServlet {
 			return;
 		}
 
+		CircleManager.addUserToCircle(userID, circleID, ds);
 
-		Gson gson = new Gson();
-		resp.setContentType("text/json");
-
-		Circle newCircle = CircleManager.createCircle(circleName, userID, ds);
-		String jString = gson.toJson(newCircle);
-		try {
-			resp.getWriter().println(jString);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 
 }
