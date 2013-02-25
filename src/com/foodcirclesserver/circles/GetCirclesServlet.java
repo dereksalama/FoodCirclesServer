@@ -14,6 +14,7 @@ package com.foodcirclesserver.circles;
 
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServlet;
@@ -44,6 +45,7 @@ public class GetCirclesServlet extends HttpServlet {
 		try {
 			if (UserManager.validateUser(tokenHash, userID, ds)) {
 				List<Circle > circleNames = CircleManager.getCircleNames(userID, ds);
+				Collections.sort(circleNames);
 
 				//add "All Friends" circle
 				Circle allFriends = new Circle(CircleManager.ALL_FRIENDS_ID, "All Friends");

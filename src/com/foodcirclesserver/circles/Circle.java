@@ -6,24 +6,24 @@ import java.util.List;
 import com.foodcirclesserver.user.User;
 
 
-public class Circle {
-	
+public class Circle implements Comparable<Circle> {
+
 	public String name;
 	public Long id;
-	
+
 	private List<User> users;
-	
+
 	//give users this list of loc/times
 	//currently in circle so user can join their friends
 	private List<String> currentEvents;
-	
+
 	public Circle() {};
-	
+
 	public Circle(Long id, String name) {
 		this.name = name;
 		this.id = id;
 	}
-	
+
 	public void addUser(User u) {
 		if (u != null) {
 			if( users == null)
@@ -31,15 +31,15 @@ public class Circle {
 			users.add(u);
 		}
 	}
-	
+
 	public void addUserList(List<User> users) {
 		this.users = users;
 	}
-	
+
 	public List<User> getUsers() {
 		return users;
 	}
-	
+
 	public List<String> generateCurrentEvents() {
 		if (users != null) {
 			currentEvents = new LinkedList<String>();
@@ -48,17 +48,21 @@ public class Circle {
 				if (eventString != null)
 					currentEvents.add(eventString);
 			}
-			
+
 			return currentEvents;
 		} else {
 			return null;
 		}
 	}
-	
+
 	public List<String> getCurrentEvents() {
 		return currentEvents;
 	}
-	
-	
+
+	public int compareTo(Circle o) {
+		return this.name.compareToIgnoreCase(o.name);
+	}
+
+
 
 }

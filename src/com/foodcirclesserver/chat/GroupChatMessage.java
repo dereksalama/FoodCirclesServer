@@ -5,7 +5,7 @@ import java.util.Date;
 import com.foodcirclesserver.user.User;
 
 
-public class GroupChatMessage {
+public class GroupChatMessage implements Comparable<GroupChatMessage> {
 
 	public String text;
 
@@ -27,6 +27,10 @@ public class GroupChatMessage {
 	@Override
 	public String toString() {
 		return text;
+	}
+
+	public int compareTo(GroupChatMessage other) {
+		return  (this.time.compareTo(other.time));
 	}
 
 }

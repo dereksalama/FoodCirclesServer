@@ -38,6 +38,7 @@ public class GetInvitesServlet extends HttpServlet {
 
 				try {
 					resp.getWriter().println(jString);
+					resp.setStatus(HttpServletResponse.SC_ACCEPTED);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}

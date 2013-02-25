@@ -15,6 +15,7 @@
 package com.foodcirclesserver.circles;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 
 import javax.servlet.http.HttpServlet;
@@ -67,6 +68,8 @@ public class GetCircleMembersServlet extends HttpServlet {
 
 		if (result == null)
 			resp.sendError(500, "No friends found");
+
+		Collections.sort(result.getUsers());
 
 		Gson gson = new Gson();
 		String jString = gson.toJson(result);
