@@ -32,6 +32,7 @@ public class CreateUserServlet extends HttpServlet {
 		String hashString = req.getParameter(UserManager.TOKEN_HASH);
 		try {
 			UserManager.createUser(userID, parsedName, hashString, ds);
+			resp.setStatus(HttpServletResponse.SC_ACCEPTED);
 		} catch (IllegalStateException e) {
 			resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());
 		}

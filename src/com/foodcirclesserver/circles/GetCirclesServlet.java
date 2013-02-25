@@ -53,6 +53,7 @@ public class GetCirclesServlet extends HttpServlet {
 				String jString = gson.toJson(circleNames);
 
 				resp.setContentType("text/json");
+				resp.setStatus(HttpServletResponse.SC_ACCEPTED);
 
 				resp.getWriter().println(jString);
 			}

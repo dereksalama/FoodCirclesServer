@@ -34,15 +34,26 @@ public class GetCircleMembersServlet extends HttpServlet {
 
 	private static final long serialVersionUID = -1986666610659062911L;
 
-	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String userID = req.getParameter(UserManager.USER_ID);
-		if (userID == null || userID.length() <= 0)
-			return; //invalid user parameter
+		String token = req.getParameter(UserManager.TOKEN_HASH);
+		String circleIDString = req.getParameter(CircleManager.CIRCLE_ID);
+		if (userID == null || userID.length() <= 0 || token == null || token.length() == 0 ||
+				circleIDString == null || circleIDString.length() == 0)
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 
-		Long circleID = Long.parseLong(req.getParameter(CircleManager.CIRCLE_ID));
+		Long circleID = Long.parseLong(circleIDString);
 
 		Circle result = null;
 		DatastoreService ds = DatastoreServiceFactory.getDatastoreService();
+
+		try {
+			if (!UserManager.validateUser(token, userID, ds)) {
+				resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+			}
+		} catch (EntityNotFoundException e1) {
+			resp.sendError(HttpServletResponse.SC_FORBIDDEN);
+		}
 
 		//if fetching "all friends" need access token for fb stuff
 		//TODO: security
@@ -50,36 +61,20 @@ public class GetCircleMembersServlet extends HttpServlet {
 			String accessToken = req.getParameter("access_token");
 			result = constructAllFriendsCircle(userID, accessToken, ds);
 		} else {
-			String hash = (req.getParameter(UserManager.TOKEN_HASH));
-			try {
-				if (UserManager.validateUser(hash, userID, ds)) {
-					result = CircleManager.getCircleWithUsers(circleID, userID, ds);
-					result.generateCurrentEvents();
-				}
-			} catch (EntityNotFoundException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			result = CircleManager.getCircleWithUsers(circleID, userID, ds);
+			result.generateCurrentEvents();
 		}
 
-		if (result == null) {
-			try {
-				resp.sendError(500, "No friends found");
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
+		if (result == null)
+			resp.sendError(500, "No friends found");
+
 		Gson gson = new Gson();
 		String jString = gson.toJson(result);
 //		System.out.println(jString);
 
 		resp.setContentType("text/json");
 
-		try {
-			resp.getWriter().println(jString);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		resp.getWriter().println(jString);
 
 	}
 
