@@ -42,6 +42,7 @@ public class InviteManager  {
 			result.setProperty(CIRCLE_ID, circleID);
 			result.setProperty(RECEIVER_ID, receiverID);
 			result.setProperty(SENDER_ID, senderID);
+			result.setProperty(WAS_RECEIVED, false);
 		}
 
 		ds.put(result);
@@ -79,6 +80,7 @@ public class InviteManager  {
 	public static List<CircleInvite> getInvitesForUser(String userID, DatastoreService ds) {
 
 		Query q = new Query(TYPE).addFilter(RECEIVER_ID, Query.FilterOperator.EQUAL, userID);
+		q.addFilter(WAS_RECEIVED, Query.FilterOperator.EQUAL, false);
 
 		Iterator<Entity> result = ds.prepare(q).asIterator();
 

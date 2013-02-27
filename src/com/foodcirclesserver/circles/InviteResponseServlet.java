@@ -1,5 +1,7 @@
 package com.foodcirclesserver.circles;
 
+import java.io.IOException;
+
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -17,15 +19,17 @@ public class InviteResponseServlet extends HttpServlet {
 	private static final long serialVersionUID = 2101971148915359984L;
 
 	//post?
-	public void doPost(HttpServletRequest req, HttpServletResponse resp) {
+	public void doPost(HttpServletRequest req, HttpServletResponse resp) throws IOException {
 		String keyIDString = req.getParameter("key");
 		Long keyID = Long.parseLong(keyIDString);
 
 		String acceptedString = req.getParameter("accepted");
 		Boolean accepted = Boolean.parseBoolean(acceptedString);
 
-		if (keyID == null || accepted == null)
-			return;
+		String tokenHash = (req.getParameter(UserManager.TOKEN_HASH));
+
+		if (keyID == null || accepted == null || tokenHash == null)
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 
 		Key key = KeyFactory.createKey(InviteManager.TYPE, keyID);
 
@@ -34,7 +38,6 @@ public class InviteResponseServlet extends HttpServlet {
 		try {
 			invite = ds.get(key);
 			String receiverID = (String) invite.getProperty(InviteManager.RECEIVER_ID);
-			String tokenHash = (req.getParameter(UserManager.TOKEN_HASH));
 
 			if (UserManager.validateUser(tokenHash, receiverID, ds)) {
 
@@ -47,10 +50,14 @@ public class InviteResponseServlet extends HttpServlet {
 
 					//TODO: notification for sender that friend accepted?
 				}
+
+				resp.setStatus(HttpServletResponse.SC_ACCEPTED);
+			} else {
+				resp.sendError(HttpServletResponse.SC_FORBIDDEN);
 			}
 		} catch (EntityNotFoundException e) {
 			e.printStackTrace();
-			return;
+			resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
 		}
 	}
 
