@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.foodcirclesserver.user.FacebookFriend;
 import com.foodcirclesserver.user.GetFriendsServlet;
+import com.foodcirclesserver.user.StatusComparator;
 import com.foodcirclesserver.user.User;
 import com.foodcirclesserver.user.UserManager;
 import com.google.appengine.api.datastore.DatastoreService;
@@ -66,19 +67,19 @@ public class GetCircleMembersServlet extends HttpServlet {
 			result.generateCurrentEvents();
 		}
 
-		if (result == null)
+		if (result == null) {
 			resp.sendError(500, "No friends found");
+		} else {
+			Collections.sort(result.getUsers(), new StatusComparator());
 
-		Collections.sort(result.getUsers());
+			Gson gson = new Gson();
+			String jString = gson.toJson(result);
+	//		System.out.println(jString);
 
-		Gson gson = new Gson();
-		String jString = gson.toJson(result);
-//		System.out.println(jString);
+			resp.setContentType("text/json");
 
-		resp.setContentType("text/json");
-
-		resp.getWriter().println(jString);
-
+			resp.getWriter().println(jString);
+		}
 	}
 
 	public static Circle constructAllFriendsCircle(String userID, String accessToken, DatastoreService ds) {

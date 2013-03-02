@@ -13,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.google.appengine.api.datastore.DatastoreService;
 import com.google.appengine.api.datastore.DatastoreServiceFactory;
+import com.google.gson.Gson;
 
 public class CreateUserServlet extends HttpServlet {
 
@@ -31,7 +32,17 @@ public class CreateUserServlet extends HttpServlet {
 
 		String hashString = req.getParameter(UserManager.TOKEN_HASH);
 		try {
-			UserManager.createUser(userID, parsedName, hashString, ds);
+			User u = UserManager.createUser(userID, parsedName, hashString, ds);
+			Gson gson = new Gson();
+			String jString = gson.toJson(u);
+
+			resp.setContentType("text/json");
+			try {
+
+				resp.getWriter().println(jString);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 			resp.setStatus(HttpServletResponse.SC_ACCEPTED);
 		} catch (IllegalStateException e) {
 			resp.sendError(HttpServletResponse.SC_FORBIDDEN, e.getMessage());

@@ -53,8 +53,13 @@ public class UserManager {
 			return;
 		}
 
-		user.setProperty(DESIRED_TIME, time);
-		user.setProperty(DESIRED_LOCATION, location);
+		if (time != null) {
+			user.setProperty(DESIRED_TIME, time);
+		}
+
+		if (location != null) {
+			user.setProperty(DESIRED_LOCATION, location);
+		}
 		ds.put(user);
 	}
 
@@ -76,11 +81,11 @@ public class UserManager {
 		}
 	}
 
-	public static void createUser(String userID, String name, String tokenHash, DatastoreService ds) {
+	public static User createUser(String userID, String name, String tokenHash, DatastoreService ds) {
 
 		if (userID == null || userID.length() <= 0) {
 			System.out.println("createUser error: null  or 0 value");
-			return;
+			return null;
 		}
 
 
@@ -105,6 +110,8 @@ public class UserManager {
 		user.setProperty(NAME, name);
 		user.setProperty(STATUS, RED);
 		ds.put(user);
+
+		return getUser(userID, ds);
 
 	}
 

@@ -18,6 +18,8 @@
 package com.foodcirclesserver.circles;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.List;
 
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -59,12 +61,20 @@ public class CircleServlet extends HttpServlet {
 			return;
 		}
 
+		CircleManager.createCircle(circleName, userID, ds);
 
 		Gson gson = new Gson();
 		resp.setContentType("text/json");
 
-		Circle newCircle = CircleManager.createCircle(circleName, userID, ds);
-		String jString = gson.toJson(newCircle);
+		List<Circle > circleNames = CircleManager.getCircleNames(userID, ds);
+		Collections.sort(circleNames);
+
+		//add "All Friends" circle
+		Circle allFriends = new Circle(CircleManager.ALL_FRIENDS_ID, "All Friends");
+		circleNames.add(allFriends);
+
+		String jString = gson.toJson(allFriends);
+		resp.setStatus(HttpServletResponse.SC_ACCEPTED);
 		try {
 			resp.getWriter().println(jString);
 		} catch (IOException e) {
